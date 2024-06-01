@@ -131,9 +131,9 @@ func SContains[T ~[]E, E comparable](sub E) FieldCheck[T] {
 	return FieldCheck[T]{check: c, message: "must contain %v"}
 }
 
-func HasPrefix[T ~string](sub string) FieldCheck[T] {
+func HasPrefix[T ~string](sub T) FieldCheck[T] {
 	c := func(m string, f T) *FieldError {
-		if strings.HasPrefix(string(f), sub) {
+		if strings.HasPrefix(string(f), string(sub)) {
 			return nil
 		}
 		return newFieldError(m, sub)
@@ -238,7 +238,7 @@ func NotDefault[T comparable]() FieldCheck[T] {
 		}
 		return newFieldError(m)
 	}
-	return FieldCheck[T]{check: c, message: "must not be default value"}
+	return FieldCheck[T]{check: c, message: "required"}
 }
 
 func Sorted[T ~[]E, E internal.Ordered]() FieldCheck[T] {

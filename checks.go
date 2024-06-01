@@ -2,6 +2,7 @@ package valdo
 
 import (
 	"bytes"
+	"fmt"
 	"regexp"
 	"slices"
 	"strings"
@@ -249,4 +250,42 @@ func Sorted[T ~[]E, E internal.Ordered]() FieldCheck[T] {
 		return newFieldError(m)
 	}
 	return FieldCheck[T]{check: c, message: "must be sorted"}
+}
+
+func True[T any](fn func(T) bool) FieldCheck[T] {
+	c := func(m string, f T) *FieldError {
+		if fn(f) {
+			return nil
+		}
+		return newFieldError(m)
+	}
+	return FieldCheck[T]{check: c, message: "invalid"}
+}
+
+func False[T any](fn func(T) bool) FieldCheck[T] {
+	c := func(m string, f T) *FieldError {
+		if !fn(f) {
+			return nil
+		}
+		return newFieldError(m)
+	}
+	return FieldCheck[T]{check: c, message: "invalid"}
+}
+
+func OneOf[T comparable](items ...T) FieldCheck[T] {
+	stringed := make([]string, 0, len(items))
+	for _, i := range items {
+		stringed = append(stringed, fmt.Sprintf("%v", i))
+	}
+	joined := strings.Join(stringed, ", ")
+
+	c := func(m string, f T) *FieldError {
+		for _, i := range items {
+			if i == f {
+				return nil
+			}
+		}
+		return newFieldError(m, joined)
+	}
+	return FieldCheck[T]{check: c, message: "must be one of: %v"}
 }

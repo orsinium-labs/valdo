@@ -43,7 +43,7 @@ func LT[T internal.Ordered](v T) FieldCheck[T] {
 	}
 }
 
-func Eq[T internal.Ordered](v T) FieldCheck[T] {
+func Eq[T comparable](v T) FieldCheck[T] {
 	return func(f T) *FieldError {
 		if f == v {
 			return nil
@@ -52,10 +52,17 @@ func Eq[T internal.Ordered](v T) FieldCheck[T] {
 	}
 }
 
-func Matches(p string) FieldCheck[string] {
+func Positive[T internal.Integer | internal.Float](f T) *FieldError {
+	if f > 0 {
+		return nil
+	}
+	return newFieldError("must be positive")
+}
+
+func Matches[T ~string](p string) FieldCheck[T] {
 	rex := regexp.MustCompile(p)
-	return func(f string) *FieldError {
-		if rex.MatchString(f) {
+	return func(f T) *FieldError {
+		if rex.MatchString(string(f)) {
 			return nil
 		}
 		return newFieldError("must match regular expression %v", p)

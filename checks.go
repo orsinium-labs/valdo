@@ -8,90 +8,112 @@ import (
 )
 
 func GTE[T internal.Ordered](v T) FieldCheck[T] {
-	return func(f T) *FieldError {
+	c := func(m string, f T) *FieldError {
 		if f >= v {
 			return nil
 		}
-		return newFieldError("must be greater than or equal to %v", v)
+		return newFieldError(m, v)
 	}
+	return FieldCheck[T]{check: c, message: "must be greater than or equal to %v"}
 }
 
 func LTE[T internal.Ordered](v T) FieldCheck[T] {
-	return func(f T) *FieldError {
+	c := func(m string, f T) *FieldError {
 		if f <= v {
 			return nil
 		}
-		return newFieldError("must be less than or equal to %v", v)
+		return newFieldError(m, v)
 	}
+	return FieldCheck[T]{check: c, message: "must be less than or equal to %v"}
 }
 
 func GT[T internal.Ordered](v T) FieldCheck[T] {
-	return func(f T) *FieldError {
+	c := func(m string, f T) *FieldError {
 		if f > v {
 			return nil
 		}
-		return newFieldError("must be greater than %v", v)
+		return newFieldError(m, v)
 	}
+	return FieldCheck[T]{check: c, message: "must be greater than %v"}
 }
 
 func LT[T internal.Ordered](v T) FieldCheck[T] {
-	return func(f T) *FieldError {
+	c := func(m string, f T) *FieldError {
 		if f < v {
 			return nil
 		}
-		return newFieldError("must be less than %v", v)
+		return newFieldError(m, v)
 	}
+	return FieldCheck[T]{check: c, message: "must be less than %v"}
 }
 
 func Eq[T comparable](v T) FieldCheck[T] {
-	return func(f T) *FieldError {
+	c := func(m string, f T) *FieldError {
 		if f == v {
 			return nil
 		}
-		return newFieldError("must be equal to %v", v)
+		return newFieldError(m, v)
 	}
+	return FieldCheck[T]{check: c, message: "must be equal to %v"}
 }
 
-func Positive[T internal.Integer | internal.Float](f T) *FieldError {
-	if f > 0 {
-		return nil
+func Positive[T internal.Integer | internal.Float]() FieldCheck[T] {
+	c := func(m string, f T) *FieldError {
+		if f > 0 {
+			return nil
+		}
+		return newFieldError(m)
 	}
-	return newFieldError("must be positive")
+	return FieldCheck[T]{check: c, message: "must be positive"}
 }
 
 func Matches[T ~string](p string) FieldCheck[T] {
 	rex := regexp.MustCompile(p)
-	return func(f T) *FieldError {
+	c := func(m string, f T) *FieldError {
 		if rex.MatchString(string(f)) {
 			return nil
 		}
-		return newFieldError("must match regular expression %v", p)
+		return newFieldError(m, p)
 	}
+	return FieldCheck[T]{check: c, message: "must match regular expression %v"}
 }
 
 func Contains(sub string) FieldCheck[string] {
-	return func(f string) *FieldError {
+	c := func(m string, f string) *FieldError {
 		if strings.Contains(f, sub) {
 			return nil
 		}
-		return newFieldError("must contain %v", sub)
+		return newFieldError(m, sub)
 	}
+	return FieldCheck[string]{check: c, message: "must contain %v"}
 }
 
-func MinLen(m int) FieldCheck[string] {
-	return func(f string) *FieldError {
-		if len(f) >= m {
+func MinLen(min int) FieldCheck[string] {
+	c := func(m string, f string) *FieldError {
+		if len(f) >= min {
 			return nil
 		}
-		return newFieldError("must be at least %d character(s)", m)
+		return newFieldError(m, min)
 	}
+	return FieldCheck[string]{check: c, message: "must be at least %d character(s)"}
 }
 
-func MaxLen(m int) FieldCheck[string] {
-	return func(f string) *FieldError {
-		if len(f) <= m {
+func MaxLen(max int) FieldCheck[string] {
+	c := func(m string, f string) *FieldError {
+		if len(f) <= max {
 			return nil
 		}
-		return newFieldError("must be at most %d character(s)", m)
+		return newFieldError(m, max)
 	}
+	return FieldCheck[string]{check: c, message: "must be at most %d character(s)"}
+}
+
+func LenIs(l int) FieldCheck[string] {
+	c := func(m string, f string) *FieldError {
+		if len(f) == l {
+			return nil
+		}
+		return newFieldError(m, l)
+	}
+	return FieldCheck[string]{check: c, message: "must be %d character(s)"}
 }

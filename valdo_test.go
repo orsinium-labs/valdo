@@ -7,6 +7,6 @@ import (
 )
 
 func TestNewFieldChecks(t *testing.T) {
-	_ = valdo.NewFieldChecks[int](valdo.Positive)
+	_ = valdo.NewFieldChecks[int](valdo.Positive[int]())
 	_ = valdo.NewFieldChecks(valdo.GTE(0))
 }

@@ -12,6 +12,14 @@ func (cs FieldChecks[T]) Check(v any) Errors {
 	panic("todo")
 }
 
+// Make a copy with the given additional checks.
+func (cs FieldChecks[T]) With(checks ...FieldCheck[T]) FieldChecks[T] {
+	result := append([]FieldCheck[T]{}, cs.checks...)
+	result = append(result, checks...)
+	cs.checks = result
+	return cs
+}
+
 type FieldCheck[T any] struct {
 	check   func(string, T) *FieldError
 	message string

@@ -1,14 +1,10 @@
 package valdo
 
-func F[T any](field T, checks ...FieldCheck[T]) error {
-	panic("todo")
-}
-
 type FieldChecks[T any] struct {
 	checks []FieldCheck[T]
 }
 
-func NewFieldChecks[T any](checks ...FieldCheck[T]) FieldChecks[T] {
+func F[T any](checks ...FieldCheck[T]) FieldChecks[T] {
 	return FieldChecks[T]{checks}
 }
 

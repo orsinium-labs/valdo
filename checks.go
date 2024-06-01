@@ -78,34 +78,54 @@ func Matches[T ~string](p string) FieldCheck[T] {
 	return FieldCheck[T]{check: c, message: "must match regular expression %v"}
 }
 
-func Contains(sub string) FieldCheck[string] {
-	c := func(m string, f string) *FieldError {
-		if strings.Contains(f, sub) {
+func Contains[T ~string](sub string) FieldCheck[T] {
+	c := func(m string, f T) *FieldError {
+		if strings.Contains(string(f), sub) {
 			return nil
 		}
 		return newFieldError(m, sub)
 	}
-	return FieldCheck[string]{check: c, message: "must contain %v"}
+	return FieldCheck[T]{check: c, message: "must contain %v"}
 }
 
-func MinLen(min int) FieldCheck[string] {
-	c := func(m string, f string) *FieldError {
+func HasPrefix[T ~string](sub string) FieldCheck[T] {
+	c := func(m string, f T) *FieldError {
+		if strings.HasPrefix(string(f), sub) {
+			return nil
+		}
+		return newFieldError(m, sub)
+	}
+	return FieldCheck[T]{check: c, message: "must start with %v"}
+}
+
+func HasSuffix[T ~string](sub string) FieldCheck[T] {
+	c := func(m string, f T) *FieldError {
+		if strings.HasSuffix(string(f), sub) {
+			return nil
+		}
+		return newFieldError(m, sub)
+	}
+	return FieldCheck[T]{check: c, message: "must end with %v"}
+}
+
+func MinLen[T ~string](min int) FieldCheck[T] {
+	c := func(m string, f T) *FieldError {
 		if len(f) >= min {
 			return nil
 		}
 		return newFieldError(m, min)
 	}
-	return FieldCheck[string]{check: c, message: "must be at least %d character(s)"}
+	return FieldCheck[T]{check: c, message: "must be at least %d character(s)"}
 }
 
-func MaxLen(max int) FieldCheck[string] {
-	c := func(m string, f string) *FieldError {
+func MaxLen[T ~string](max int) FieldCheck[T] {
+	c := func(m string, f T) *FieldError {
 		if len(f) <= max {
 			return nil
 		}
 		return newFieldError(m, max)
 	}
-	return FieldCheck[string]{check: c, message: "must be at most %d character(s)"}
+	return FieldCheck[T]{check: c, message: "must be at most %d character(s)"}
 }
 
 func LenIs(l int) FieldCheck[string] {

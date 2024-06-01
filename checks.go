@@ -118,7 +118,7 @@ func MinLen[T ~string](min int) FieldCheck[T] {
 	return FieldCheck[T]{check: c, message: "must be at least %d character(s)"}
 }
 
-func MaxLen[T ~string](max int) FieldCheck[T] {
+func MaxLen[T ~string | ~[]E, E any](max int) FieldCheck[T] {
 	c := func(m string, f T) *FieldError {
 		if len(f) <= max {
 			return nil
@@ -128,12 +128,22 @@ func MaxLen[T ~string](max int) FieldCheck[T] {
 	return FieldCheck[T]{check: c, message: "must be at most %d character(s)"}
 }
 
-func LenIs(l int) FieldCheck[string] {
-	c := func(m string, f string) *FieldError {
+func LenIs[T ~string | ~[]E, E any](l int) FieldCheck[T] {
+	c := func(m string, f T) *FieldError {
 		if len(f) == l {
 			return nil
 		}
 		return newFieldError(m, l)
 	}
-	return FieldCheck[string]{check: c, message: "must be %d character(s)"}
+	return FieldCheck[T]{check: c, message: "must be %d character(s)"}
+}
+
+func NotDefault[T comparable]() FieldCheck[T] {
+	c := func(m string, f T) *FieldError {
+		if f == *new(T) {
+			return nil
+		}
+		return newFieldError(m)
+	}
+	return FieldCheck[T]{check: c, message: "must not be default value"}
 }

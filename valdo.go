@@ -8,7 +8,7 @@ func F[T any](checks ...FieldCheck[T]) FieldChecks[T] {
 	return FieldChecks[T]{checks}
 }
 
-func (cs FieldChecks[T]) Check(v any) Errors {
+func (cs FieldChecks[T]) Check(v T) Errors {
 	panic("todo")
 }
 

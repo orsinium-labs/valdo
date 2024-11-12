@@ -32,6 +32,10 @@ type Float interface {
 	~float32 | ~float64
 }
 
+type Number interface {
+	Integer | Float
+}
+
 // Complex is a constraint that permits any complex numeric type.
 // If future releases of Go add new predeclared complex numeric types,
 // this constraint will be modified to include them.
@@ -44,5 +48,9 @@ type Complex interface {
 // If future releases of Go add new ordered types,
 // this constraint will be modified to include them.
 type Ordered interface {
-	Integer | Float | ~string
+	Number | ~string
+}
+
+type Primitive interface {
+	Number | ~string | ~bool
 }

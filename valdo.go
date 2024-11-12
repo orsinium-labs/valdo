@@ -1,32 +1,22 @@
 package valdo
 
-type FieldChecks[T any] struct {
-	checks []FieldCheck[T]
+import (
+	"github.com/orsinium-labs/jsony"
+)
+
+type Validator interface {
+	Validate(data any) Errors
+	Schema() jsony.Object
 }
 
-func F[T any](checks ...FieldCheck[T]) FieldChecks[T] {
-	return FieldChecks[T]{checks}
-}
-
-func (cs FieldChecks[T]) Check(v T) Errors {
-	panic("todo")
-}
-
-// Make a copy with the given additional checks.
-func (cs FieldChecks[T]) With(checks ...FieldCheck[T]) FieldChecks[T] {
-	result := append([]FieldCheck[T]{}, cs.checks...)
-	result = append(result, checks...)
-	cs.checks = result
-	return cs
-}
-
-type FieldCheck[T any] struct {
+type Constraint[T any] struct {
 	check   func(string, T) *FieldError
+	field   jsony.Field
 	message string
 }
 
 // Make a copy of the check with the given error message.
-func (f FieldCheck[T]) M(message string) FieldCheck[T] {
+func (f Constraint[T]) M(message string) Constraint[T] {
 	f.message = message
 	return f
 }

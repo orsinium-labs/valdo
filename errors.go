@@ -4,7 +4,7 @@ import "fmt"
 
 type Errors interface {
 	Error() string
-	First() *FieldError
+	// First() *FieldError
 }
 
 type FieldError struct {

@@ -91,7 +91,7 @@ func Matches[T ~string](p string) FieldCheck[T] {
 	return FieldCheck[T]{check: c, message: "must match regular expression %v"}
 }
 
-func BMatches[T ~[]byte](p string) FieldCheck[T] {
+func MatchesB[T ~[]byte](p string) FieldCheck[T] {
 	rex := regexp.MustCompile(p)
 	c := func(m string, f T) *FieldError {
 		if rex.Match([]byte(f)) {
@@ -112,7 +112,7 @@ func Contains[T ~string](sub T) FieldCheck[T] {
 	return FieldCheck[T]{check: c, message: "must contain %v"}
 }
 
-func BContains[T ~[]byte](sub T) FieldCheck[T] {
+func ContainsB[T ~[]byte](sub T) FieldCheck[T] {
 	c := func(m string, f T) *FieldError {
 		if bytes.Contains(f, sub) {
 			return nil
@@ -122,7 +122,7 @@ func BContains[T ~[]byte](sub T) FieldCheck[T] {
 	return FieldCheck[T]{check: c, message: "must contain %v"}
 }
 
-func SContains[T ~[]E, E comparable](sub E) FieldCheck[T] {
+func ContainsA[T ~[]E, E comparable](sub E) FieldCheck[T] {
 	c := func(m string, f T) *FieldError {
 		if slices.Contains(f, sub) {
 			return nil
@@ -142,7 +142,7 @@ func HasPrefix[T ~string](sub T) FieldCheck[T] {
 	return FieldCheck[T]{check: c, message: "must start with %v"}
 }
 
-func BHasPrefix[T ~[]byte](sub T) FieldCheck[T] {
+func HasPrefixB[T ~[]byte](sub T) FieldCheck[T] {
 	c := func(m string, f T) *FieldError {
 		if bytes.HasPrefix(f, sub) {
 			return nil
@@ -162,7 +162,7 @@ func HasSuffix[T ~string](sub T) FieldCheck[T] {
 	return FieldCheck[T]{check: c, message: "must end with %v"}
 }
 
-func BHasSuffix[T ~[]byte](sub T) FieldCheck[T] {
+func HasSuffixB[T ~[]byte](sub T) FieldCheck[T] {
 	c := func(m string, f T) *FieldError {
 		if bytes.HasSuffix(f, sub) {
 			return nil
@@ -182,7 +182,7 @@ func MinLen[T ~string](min int) FieldCheck[T] {
 	return FieldCheck[T]{check: c, message: "must be at least %d character(s)"}
 }
 
-func SMinLen[T ~[]E, E any](min int) FieldCheck[T] {
+func MinLenA[T ~[]E, E any](min int) FieldCheck[T] {
 	c := func(m string, f T) *FieldError {
 		if len(f) >= min {
 			return nil
@@ -202,7 +202,7 @@ func MaxLen[T ~string, E any](max int) FieldCheck[T] {
 	return FieldCheck[T]{check: c, message: "must be at most %d character(s)"}
 }
 
-func SMaxLen[T ~[]E, E any](max int) FieldCheck[T] {
+func MaxLenA[T ~[]E, E any](max int) FieldCheck[T] {
 	c := func(m string, f T) *FieldError {
 		if len(f) <= max {
 			return nil
@@ -222,7 +222,7 @@ func LenIs[T ~string](l int) FieldCheck[T] {
 	return FieldCheck[T]{check: c, message: "must be %d character(s)"}
 }
 
-func SLenIs[T ~[]E, E any](l int) FieldCheck[T] {
+func LenIsA[T ~[]E, E any](l int) FieldCheck[T] {
 	c := func(m string, f T) *FieldError {
 		if len(f) == l {
 			return nil

@@ -1,15 +1,30 @@
 package valdo
 
-import "github.com/orsinium-labs/valdo/internal"
+import (
+	"github.com/orsinium-labs/jsony"
+	"github.com/orsinium-labs/valdo/internal"
+)
 
 type Primitive[T internal.Primitive] struct {
-	val func(string, any) (T, *FieldError)
-	cs  []Constraint[T]
-	msg string
+	val  func(string, any) (T, *FieldError)
+	cs   []Constraint[T]
+	meta []Meta
+	name string
+	msg  string
 }
 
-func (p Primitive[T]) M(msg string) Primitive[T] {
+var (
+	_ Validator = Bool()
+	_ Validator = String()
+)
+
+func (p Primitive[T]) Message(msg string) Primitive[T] {
 	p.msg = msg
+	return p
+}
+
+func (p Primitive[T]) Meta(meta ...Meta) Primitive[T] {
+	p.meta = append(p.meta, meta...)
 	return p
 }
 
@@ -32,10 +47,24 @@ func (p Primitive[T]) Validate(raw any) Errors {
 	return nil
 }
 
+func (p Primitive[T]) Schema() jsony.Object {
+	res := jsony.Object{
+		jsony.Field{K: "type", V: jsony.String(p.name)},
+	}
+	for _, c := range p.cs {
+		res = append(res, c.field)
+	}
+	for _, meta := range p.meta {
+		res = append(res, meta.field)
+	}
+	return res
+}
+
 func Bool() Primitive[bool] {
 	return Primitive[bool]{
-		val: boolValidator,
-		msg: "must be boolean",
+		val:  boolValidator,
+		msg:  "must be boolean",
+		name: "boolean",
 	}
 }
 
@@ -57,8 +86,9 @@ func boolValidator(msg string, raw any) (bool, *FieldError) {
 
 func String() Primitive[string] {
 	return Primitive[string]{
-		val: stringValidator,
-		msg: "must be string",
+		val:  stringValidator,
+		msg:  "must be string",
+		name: "string",
 	}
 }
 

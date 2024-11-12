@@ -8,14 +8,14 @@ type Errors interface {
 }
 
 type FieldError struct {
-	Template string
-	Args     []any
+	Format string
+	Args   []any
 }
 
-func newFieldError(t string, args ...any) *FieldError {
-	return &FieldError{t, args}
+func newFieldError(f string, args ...any) *FieldError {
+	return &FieldError{f, args}
 }
 
 func (e *FieldError) Error() string {
-	return fmt.Sprintf(e.Template, e.Args...)
+	return fmt.Sprintf(e.Format, e.Args...)
 }

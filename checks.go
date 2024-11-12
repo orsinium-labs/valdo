@@ -17,7 +17,10 @@ func GTE[T internal.Ordered](v T) FieldCheck[T] {
 		}
 		return newFieldError(m, v)
 	}
-	return FieldCheck[T]{check: c, message: "must be greater than or equal to %v"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must be greater than or equal to %v",
+	}
 }
 
 func LTE[T internal.Ordered](v T) FieldCheck[T] {
@@ -27,7 +30,10 @@ func LTE[T internal.Ordered](v T) FieldCheck[T] {
 		}
 		return newFieldError(m, v)
 	}
-	return FieldCheck[T]{check: c, message: "must be less than or equal to %v"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must be less than or equal to %v",
+	}
 }
 
 func GT[T internal.Ordered](v T) FieldCheck[T] {
@@ -37,7 +43,10 @@ func GT[T internal.Ordered](v T) FieldCheck[T] {
 		}
 		return newFieldError(m, v)
 	}
-	return FieldCheck[T]{check: c, message: "must be greater than %v"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must be greater than %v",
+	}
 }
 
 func LT[T internal.Ordered](v T) FieldCheck[T] {
@@ -47,7 +56,10 @@ func LT[T internal.Ordered](v T) FieldCheck[T] {
 		}
 		return newFieldError(m, v)
 	}
-	return FieldCheck[T]{check: c, message: "must be less than %v"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must be less than %v",
+	}
 }
 
 func Eq[T comparable](v T) FieldCheck[T] {
@@ -57,7 +69,10 @@ func Eq[T comparable](v T) FieldCheck[T] {
 		}
 		return newFieldError(m, v)
 	}
-	return FieldCheck[T]{check: c, message: "must be equal to %v"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must be equal to %v",
+	}
 }
 
 func NE[T comparable](v T) FieldCheck[T] {
@@ -67,7 +82,10 @@ func NE[T comparable](v T) FieldCheck[T] {
 		}
 		return newFieldError(m, v)
 	}
-	return FieldCheck[T]{check: c, message: "must not be equal to %v"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must not be equal to %v",
+	}
 }
 
 func Positive[T internal.Integer | internal.Float]() FieldCheck[T] {
@@ -77,7 +95,10 @@ func Positive[T internal.Integer | internal.Float]() FieldCheck[T] {
 		}
 		return newFieldError(m)
 	}
-	return FieldCheck[T]{check: c, message: "must be positive"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must be positive",
+	}
 }
 
 func Matches[T ~string](p string) FieldCheck[T] {
@@ -88,7 +109,10 @@ func Matches[T ~string](p string) FieldCheck[T] {
 		}
 		return newFieldError(m, p)
 	}
-	return FieldCheck[T]{check: c, message: "must match regular expression %v"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must match regular expression %v",
+	}
 }
 
 func MatchesB[T ~[]byte](p string) FieldCheck[T] {
@@ -99,7 +123,10 @@ func MatchesB[T ~[]byte](p string) FieldCheck[T] {
 		}
 		return newFieldError(m, p)
 	}
-	return FieldCheck[T]{check: c, message: "must match regular expression %v"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must match regular expression %v",
+	}
 }
 
 func Contains[T ~string](sub T) FieldCheck[T] {
@@ -109,7 +136,10 @@ func Contains[T ~string](sub T) FieldCheck[T] {
 		}
 		return newFieldError(m, sub)
 	}
-	return FieldCheck[T]{check: c, message: "must contain %v"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must contain %v",
+	}
 }
 
 func ContainsB[T ~[]byte](sub T) FieldCheck[T] {
@@ -119,7 +149,10 @@ func ContainsB[T ~[]byte](sub T) FieldCheck[T] {
 		}
 		return newFieldError(m, sub)
 	}
-	return FieldCheck[T]{check: c, message: "must contain %v"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must contain %v",
+	}
 }
 
 func ContainsA[T ~[]E, E comparable](sub E) FieldCheck[T] {
@@ -129,7 +162,10 @@ func ContainsA[T ~[]E, E comparable](sub E) FieldCheck[T] {
 		}
 		return newFieldError(m, sub)
 	}
-	return FieldCheck[T]{check: c, message: "must contain %v"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must contain %v",
+	}
 }
 
 func HasPrefix[T ~string](sub T) FieldCheck[T] {
@@ -139,7 +175,10 @@ func HasPrefix[T ~string](sub T) FieldCheck[T] {
 		}
 		return newFieldError(m, sub)
 	}
-	return FieldCheck[T]{check: c, message: "must start with %v"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must start with %v",
+	}
 }
 
 func HasPrefixB[T ~[]byte](sub T) FieldCheck[T] {
@@ -149,7 +188,10 @@ func HasPrefixB[T ~[]byte](sub T) FieldCheck[T] {
 		}
 		return newFieldError(m, sub)
 	}
-	return FieldCheck[T]{check: c, message: "must start with %v"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must start with %v",
+	}
 }
 
 func HasSuffix[T ~string](sub T) FieldCheck[T] {
@@ -159,7 +201,10 @@ func HasSuffix[T ~string](sub T) FieldCheck[T] {
 		}
 		return newFieldError(m, sub)
 	}
-	return FieldCheck[T]{check: c, message: "must end with %v"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must end with %v",
+	}
 }
 
 func HasSuffixB[T ~[]byte](sub T) FieldCheck[T] {
@@ -169,7 +214,10 @@ func HasSuffixB[T ~[]byte](sub T) FieldCheck[T] {
 		}
 		return newFieldError(m, sub)
 	}
-	return FieldCheck[T]{check: c, message: "must end with %v"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must end with %v",
+	}
 }
 
 func MinLen[T ~string](min int) FieldCheck[T] {
@@ -179,7 +227,10 @@ func MinLen[T ~string](min int) FieldCheck[T] {
 		}
 		return newFieldError(m, min)
 	}
-	return FieldCheck[T]{check: c, message: "must be at least %d character(s)"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must be at least %d character(s)",
+	}
 }
 
 func MinLenA[T ~[]E, E any](min int) FieldCheck[T] {
@@ -189,7 +240,10 @@ func MinLenA[T ~[]E, E any](min int) FieldCheck[T] {
 		}
 		return newFieldError(m, min)
 	}
-	return FieldCheck[T]{check: c, message: "must have at least %d item(s)"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must have at least %d item(s)",
+	}
 }
 
 func MaxLen[T ~string, E any](max int) FieldCheck[T] {
@@ -199,7 +253,10 @@ func MaxLen[T ~string, E any](max int) FieldCheck[T] {
 		}
 		return newFieldError(m, max)
 	}
-	return FieldCheck[T]{check: c, message: "must be at most %d character(s)"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must be at most %d character(s)",
+	}
 }
 
 func MaxLenA[T ~[]E, E any](max int) FieldCheck[T] {
@@ -209,7 +266,10 @@ func MaxLenA[T ~[]E, E any](max int) FieldCheck[T] {
 		}
 		return newFieldError(m, max)
 	}
-	return FieldCheck[T]{check: c, message: "must have at most %d item(s)"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must have at most %d item(s)",
+	}
 }
 
 func LenIs[T ~string](l int) FieldCheck[T] {
@@ -219,7 +279,10 @@ func LenIs[T ~string](l int) FieldCheck[T] {
 		}
 		return newFieldError(m, l)
 	}
-	return FieldCheck[T]{check: c, message: "must be %d character(s)"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must be %d character(s)",
+	}
 }
 
 func LenIsA[T ~[]E, E any](l int) FieldCheck[T] {
@@ -229,7 +292,10 @@ func LenIsA[T ~[]E, E any](l int) FieldCheck[T] {
 		}
 		return newFieldError(m, l)
 	}
-	return FieldCheck[T]{check: c, message: "must have %d item(s)"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must have %d item(s)",
+	}
 }
 
 func NotDefault[T comparable]() FieldCheck[T] {
@@ -239,7 +305,10 @@ func NotDefault[T comparable]() FieldCheck[T] {
 		}
 		return newFieldError(m)
 	}
-	return FieldCheck[T]{check: c, message: "required"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "required",
+	}
 }
 
 func Sorted[T ~[]E, E internal.Ordered]() FieldCheck[T] {
@@ -249,7 +318,10 @@ func Sorted[T ~[]E, E internal.Ordered]() FieldCheck[T] {
 		}
 		return newFieldError(m)
 	}
-	return FieldCheck[T]{check: c, message: "must be sorted"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must be sorted",
+	}
 }
 
 func True[T any](fn func(T) bool) FieldCheck[T] {
@@ -259,7 +331,10 @@ func True[T any](fn func(T) bool) FieldCheck[T] {
 		}
 		return newFieldError(m)
 	}
-	return FieldCheck[T]{check: c, message: "invalid"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "invalid",
+	}
 }
 
 func False[T any](fn func(T) bool) FieldCheck[T] {
@@ -269,7 +344,10 @@ func False[T any](fn func(T) bool) FieldCheck[T] {
 		}
 		return newFieldError(m)
 	}
-	return FieldCheck[T]{check: c, message: "invalid"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "invalid",
+	}
 }
 
 func OneOf[T comparable](items ...T) FieldCheck[T] {
@@ -287,5 +365,8 @@ func OneOf[T comparable](items ...T) FieldCheck[T] {
 		}
 		return newFieldError(m, joined)
 	}
-	return FieldCheck[T]{check: c, message: "must be one of: %v"}
+	return FieldCheck[T]{
+		check:   c,
+		message: "must be one of: %v",
+	}
 }

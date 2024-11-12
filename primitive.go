@@ -39,7 +39,7 @@ func (p Primitive[T]) Validate(raw any) Errors {
 		return fErr
 	}
 	for _, c := range p.cs {
-		fErr := c.check(c.message, val)
+		fErr := c.check(c.msg, val)
 		if fErr != nil {
 			return fErr
 		}

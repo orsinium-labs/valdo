@@ -60,3 +60,18 @@ func Minimum[T internal.Number](v T) Constraint[T] {
 		msg:   "must be greater than or equal to %v",
 	}
 }
+
+func MinLength(min uint) Constraint[string] {
+	minInt := int(min)
+	c := func(m string, f string) *FieldError {
+		if len(f) >= minInt {
+			return nil
+		}
+		return newFieldError(m, minInt)
+	}
+	return Constraint[string]{
+		check: c,
+		field: jsony.Field{K: "minLength", V: jsony.UInt(min)},
+		msg:   "must be at least %d characters long",
+	}
+}

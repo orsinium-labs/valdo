@@ -8,62 +8,47 @@ import (
 
 type Object struct {
 	ps    []Property
-	msg   string
 	extra bool
 }
 
 var _ Validator = O()
 
 func O(ps ...Property) Object {
-	return Object{
-		ps:  ps,
-		msg: "invalid type: expected object, got %s",
-	}
+	return Object{ps: ps}
 }
 
-func (obj Object) Validate(data any) Errors {
+func (obj Object) Validate(data any) Error {
 	switch d := data.(type) {
 	case map[string]any:
 		return obj.validateMap(d)
-	case int, int8, int16, int32, int64:
-		return newFieldError(obj.msg, "integer")
-	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return newFieldError(obj.msg, "unsigned integer")
-	case bool:
-		return newFieldError(obj.msg, "boolean")
-	case string:
-		return newFieldError(obj.msg, "string")
-	case float32, float64:
-		return newFieldError(obj.msg, "number")
 	default:
-		return obj.validateReflect(data)
+		return ErrType{Got: getTypeName(data), Expected: "object"}
 	}
 }
 
-func (obj Object) validateMap(data map[string]any) Errors {
-	var resErr Errors
+func (obj Object) validateMap(data map[string]any) Error {
+	res := Errors{}
 	for _, p := range obj.ps {
 		val, found := data[p.name]
 		if !found {
 			if p.optional {
 				continue
 			}
-			resErr = newFieldError("%s required but not found", p.name)
+			res.Errs = append(res.Errs, ErrRequired{Name: p.name})
 		}
-		pErr := p.Validate(val)
-		if pErr != nil {
-			// TODO: concatenate errors
-			resErr = pErr
+		err := p.Validate(val)
+		if err != nil {
+			res.Errs = append(res.Errs, err)
 		}
 	}
 	if !obj.extra {
 		for name := range data {
 			if !obj.hasProperty(name) {
-				return newFieldError("unexpected property found: %s", name)
+				res.Errs = append(res.Errs, ErrUnexpected{Name: name})
 			}
 		}
 	}
-	return resErr
+	return res
 }
 
 func (obj Object) hasProperty(name string) bool {
@@ -75,22 +60,22 @@ func (obj Object) hasProperty(name string) bool {
 	return false
 }
 
-func (obj Object) validateReflect(data any) Errors {
-	val := reflect.ValueOf(data)
-	kind := val.Kind()
-	switch kind {
-	case reflect.Struct:
-		return obj.validateReflectStruct(val)
-	case reflect.Map:
-		panic("todo")
-	case reflect.Pointer:
-		panic("todo")
-	case reflect.Slice:
-		return newFieldError(obj.msg, "array")
-	default:
-		return newFieldError(obj.msg, kind.String())
-	}
-}
+// func (obj Object) validateReflect(data any) Errors {
+// 	val := reflect.ValueOf(data)
+// 	kind := val.Kind()
+// 	switch kind {
+// 	case reflect.Struct:
+// 		return obj.validateReflectStruct(val)
+// 	case reflect.Map:
+// 		panic("todo")
+// 	case reflect.Pointer:
+// 		panic("todo")
+// 	case reflect.Slice:
+// 		return newFieldError(obj.msg, "array")
+// 	default:
+// 		return newFieldError(obj.msg, kind.String())
+// 	}
+// }
 
 func (obj Object) validateReflectStruct(data reflect.Value) Errors {
 	panic("todo")
@@ -133,10 +118,10 @@ func (p Property) Optional() Property {
 	return p
 }
 
-func (p Property) Validate(data any) Errors {
+func (p Property) Validate(data any) Error {
 	err := p.validator.Validate(data)
 	if err != nil {
-		return newFieldError(p.name+" %v", err.Error())
+		return ErrProperty{Name: p.name, Err: err}
 	}
 	return nil
 }

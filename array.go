@@ -2,46 +2,49 @@ package valdo
 
 type Array struct {
 	elem Validator
-	msg  string
 }
 
 func A(elem Validator) Array {
 	return Array{
 		elem: elem,
-		msg:  "invalid type: expected array, got %s",
 	}
 }
 
-func (a Array) Validate(data any) Errors {
+func (a Array) Validate(data any) Error {
 	switch d := data.(type) {
 	case []any:
 		return a.validateArray(d)
-	case int, int8, int16, int32, int64:
-		return newFieldError(a.msg, "integer")
-	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return newFieldError(a.msg, "unsigned integer")
-	case bool:
-		return newFieldError(a.msg, "boolean")
-	case string:
-		return newFieldError(a.msg, "string")
-	case float32, float64:
-		return newFieldError(a.msg, "number")
 	default:
-		return a.validateReflect(data)
+		return ErrType{Got: getTypeName(data), Expected: "array"}
 	}
 }
 
-func (a Array) validateArray(data []any) Errors {
-	for _, val := range data {
+func (a Array) validateArray(data []any) Error {
+	for i, val := range data {
 		err := a.elem.Validate(val)
 		if err != nil {
-			// TODO: include value index
-			return err
+			return ErrIndex{Index: i, Err: err}
 		}
 	}
 	return nil
 }
 
-func (a Array) validateReflect(data any) Errors {
-	panic("todo")
+func getTypeName(v any) string {
+	if v == nil {
+		return "null"
+	}
+	switch v.(type) {
+	case int, int8, int16, int32, int64:
+		return "integer"
+	case uint, uint8, uint16, uint32, uint64, uintptr:
+		return "unsigned integer"
+	case bool:
+		return "boolean"
+	case string:
+		return "string"
+	case float32, float64:
+		return "number"
+	default:
+		return "invalid type"
+	}
 }

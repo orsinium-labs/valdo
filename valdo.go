@@ -7,7 +7,7 @@ import (
 )
 
 type Validator interface {
-	Validate(data any) Errors
+	Validate(data any) Error
 	Schema() jsony.Object
 }
 
@@ -24,7 +24,7 @@ func Unmarshal[T any](v Validator, input []byte, target *T) error {
 	return json.Unmarshal(input, target)
 }
 
-func Validate(v Validator, input []byte) error {
+func Validate(v Validator, input []byte) Error {
 	var data any
 	err := json.Unmarshal(input, &data)
 	if err != nil {

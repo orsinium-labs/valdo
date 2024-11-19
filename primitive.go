@@ -6,22 +6,16 @@ import (
 )
 
 type Primitive[T internal.Primitive] struct {
-	val  func(string, any) (T, *FieldError)
+	val  func(any) (T, Error)
 	cs   []Constraint[T]
 	meta []Meta
 	name string
-	msg  string
 }
 
 var (
 	_ Validator = Bool()
 	_ Validator = String()
 )
-
-func (p Primitive[T]) Message(msg string) Primitive[T] {
-	p.msg = msg
-	return p
-}
 
 func (p Primitive[T]) Meta(meta ...Meta) Primitive[T] {
 	p.meta = append(p.meta, meta...)
@@ -33,13 +27,13 @@ func (p Primitive[T]) Constrain(cs ...Constraint[T]) Primitive[T] {
 	return p
 }
 
-func (p Primitive[T]) Validate(raw any) Errors {
-	val, fErr := p.val(p.msg, raw)
+func (p Primitive[T]) Validate(raw any) Error {
+	val, fErr := p.val(raw)
 	if fErr != nil {
 		return fErr
 	}
 	for _, c := range p.cs {
-		fErr := c.check(c.msg, val)
+		fErr := c.check(val)
 		if fErr != nil {
 			return fErr
 		}
@@ -63,12 +57,11 @@ func (p Primitive[T]) Schema() jsony.Object {
 func Bool() Primitive[bool] {
 	return Primitive[bool]{
 		val:  boolValidator,
-		msg:  "must be boolean",
 		name: "boolean",
 	}
 }
 
-func boolValidator(msg string, raw any) (bool, *FieldError) {
+func boolValidator(raw any) (bool, Error) {
 	switch val := raw.(type) {
 	case bool:
 		return val, nil
@@ -79,23 +72,23 @@ func boolValidator(msg string, raw any) (bool, *FieldError) {
 		case "false":
 			return false, nil
 		}
-		return false, newFieldError(msg)
+		return false, ErrType{Got: "string", Expected: "boolean"}
+	default:
+		return false, ErrType{Got: getTypeName(raw), Expected: "boolean"}
 	}
-	return false, newFieldError(msg)
 }
 
 func String() Primitive[string] {
 	return Primitive[string]{
 		val:  stringValidator,
-		msg:  "must be string",
 		name: "string",
 	}
 }
 
-func stringValidator(msg string, raw any) (string, *FieldError) {
+func stringValidator(raw any) (string, Error) {
 	val, isString := raw.(string)
 	if !isString {
-		return "", newFieldError(msg)
+		return "", ErrType{Got: getTypeName(raw), Expected: "string"}
 	}
 	return val, nil
 }

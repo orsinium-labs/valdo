@@ -6,14 +6,8 @@ import (
 )
 
 type Constraint[T any] struct {
-	check func(string, T) *FieldError
+	check func(T) Error
 	field jsony.Field
-	msg   string
-}
-
-func (c Constraint[T]) Message(msg string) Constraint[T] {
-	c.msg = msg
-	return c
 }
 
 func jsonyNumber[T internal.Number](v T) jsony.Encoder {
@@ -34,44 +28,41 @@ func MultipleOf[T internal.Number](v T) Constraint[T] {
 	if v <= 0 {
 		panic("the value must be positive")
 	}
-	c := func(m string, f T) *FieldError {
+	c := func(f T) Error {
 		if f/v == 0 {
 			return nil
 		}
-		return newFieldError(m, v)
+		return ErrMultipleOf{Value: v}
 	}
 	return Constraint[T]{
 		check: c,
 		field: jsony.Field{K: "multipleOf", V: jsonyNumber(v)},
-		msg:   "must be a multiple of %v",
 	}
 }
 
 func Minimum[T internal.Number](v T) Constraint[T] {
-	c := func(m string, f T) *FieldError {
+	c := func(f T) Error {
 		if f >= v {
 			return nil
 		}
-		return newFieldError(m, v)
+		return ErrMinimum{Value: v}
 	}
 	return Constraint[T]{
 		check: c,
 		field: jsony.Field{K: "minimum", V: jsonyNumber(v)},
-		msg:   "must be greater than or equal to %v",
 	}
 }
 
 func MinLength(min uint) Constraint[string] {
 	minInt := int(min)
-	c := func(m string, f string) *FieldError {
+	c := func(f string) Error {
 		if len(f) >= minInt {
 			return nil
 		}
-		return newFieldError(m, minInt)
+		return ErrMinLength{Value: minInt}
 	}
 	return Constraint[string]{
 		check: c,
 		field: jsony.Field{K: "minLength", V: jsony.UInt(min)},
-		msg:   "must be at least %d characters long",
 	}
 }

@@ -1,16 +1,16 @@
 package valdo
 
-type Array struct {
+type ArrayType struct {
 	elem Validator
 }
 
-func A(elem Validator) Array {
-	return Array{
+func Array(elem Validator) ArrayType {
+	return ArrayType{
 		elem: elem,
 	}
 }
 
-func (a Array) Validate(data any) Error {
+func (a ArrayType) Validate(data any) Error {
 	switch d := data.(type) {
 	case []any:
 		return a.validateArray(d)
@@ -19,7 +19,7 @@ func (a Array) Validate(data any) Error {
 	}
 }
 
-func (a Array) validateArray(data []any) Error {
+func (a ArrayType) validateArray(data []any) Error {
 	for i, val := range data {
 		err := a.elem.Validate(val)
 		if err != nil {

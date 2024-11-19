@@ -6,18 +6,18 @@ import (
 	"github.com/orsinium-labs/jsony"
 )
 
-type Object struct {
+type ObjectType struct {
 	ps    []Property
 	extra bool
 }
 
-var _ Validator = O()
+var _ Validator = Object()
 
-func O(ps ...Property) Object {
-	return Object{ps: ps}
+func Object(ps ...Property) ObjectType {
+	return ObjectType{ps: ps}
 }
 
-func (obj Object) Validate(data any) Error {
+func (obj ObjectType) Validate(data any) Error {
 	switch d := data.(type) {
 	case map[string]any:
 		return obj.validateMap(d)
@@ -26,7 +26,7 @@ func (obj Object) Validate(data any) Error {
 	}
 }
 
-func (obj Object) validateMap(data map[string]any) Error {
+func (obj ObjectType) validateMap(data map[string]any) Error {
 	res := Errors{}
 	for _, p := range obj.ps {
 		val, found := data[p.name]
@@ -51,7 +51,7 @@ func (obj Object) validateMap(data map[string]any) Error {
 	return res
 }
 
-func (obj Object) hasProperty(name string) bool {
+func (obj ObjectType) hasProperty(name string) bool {
 	for _, p := range obj.ps {
 		if p.name == name {
 			return true
@@ -77,14 +77,14 @@ func (obj Object) hasProperty(name string) bool {
 // 	}
 // }
 
-func (obj Object) validateReflectStruct(data reflect.Value) Errors {
+func (obj ObjectType) validateReflectStruct(data reflect.Value) Errors {
 	panic("todo")
 	// for i := range data.NumField() {
 	// 	field := data.Field(i)
 	// }
 }
 
-func (obj Object) Schema() jsony.Object {
+func (obj ObjectType) Schema() jsony.Object {
 	required := make(jsony.Array[jsony.String], 0)
 	properties := make(jsony.Map, 0)
 	for _, p := range obj.ps {

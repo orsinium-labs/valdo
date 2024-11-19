@@ -5,7 +5,7 @@ import (
 	"github.com/orsinium-labs/valdo/internal"
 )
 
-type Primitive[T internal.Primitive] struct {
+type PrimitiveType[T internal.Primitive] struct {
 	val  func(any) (T, Error)
 	cs   []Constraint[T]
 	meta []Meta
@@ -17,17 +17,12 @@ var (
 	_ Validator = String()
 )
 
-func (p Primitive[T]) Meta(meta ...Meta) Primitive[T] {
-	p.meta = append(p.meta, meta...)
-	return p
-}
-
-func (p Primitive[T]) Constrain(cs ...Constraint[T]) Primitive[T] {
+func (p PrimitiveType[T]) Constrain(cs ...Constraint[T]) PrimitiveType[T] {
 	p.cs = append(p.cs, cs...)
 	return p
 }
 
-func (p Primitive[T]) Validate(raw any) Error {
+func (p PrimitiveType[T]) Validate(raw any) Error {
 	val, fErr := p.val(raw)
 	if fErr != nil {
 		return fErr
@@ -41,7 +36,7 @@ func (p Primitive[T]) Validate(raw any) Error {
 	return nil
 }
 
-func (p Primitive[T]) Schema() jsony.Object {
+func (p PrimitiveType[T]) Schema() jsony.Object {
 	res := jsony.Object{
 		jsony.Field{K: "type", V: jsony.String(p.name)},
 	}
@@ -54,8 +49,8 @@ func (p Primitive[T]) Schema() jsony.Object {
 	return res
 }
 
-func Bool() Primitive[bool] {
-	return Primitive[bool]{
+func Bool() PrimitiveType[bool] {
+	return PrimitiveType[bool]{
 		val:  boolValidator,
 		name: "boolean",
 	}
@@ -78,8 +73,8 @@ func boolValidator(raw any) (bool, Error) {
 	}
 }
 
-func String() Primitive[string] {
-	return Primitive[string]{
+func String() PrimitiveType[string] {
+	return PrimitiveType[string]{
 		val:  stringValidator,
 		name: "string",
 	}

@@ -7,15 +7,6 @@ import (
 
 type Error = error
 
-var (
-	_ Error = Errors{}
-	_ Error = ErrProperty{}
-	_ Error = ErrIndex{}
-	_ Error = ErrType{}
-	_ Error = ErrRequired{}
-	_ Error = ErrUnexpected{}
-)
-
 // A collection of multiple errors.
 type Errors struct {
 	Sep  string
@@ -37,7 +28,11 @@ func (es Errors) Error() string {
 	for i, e := range es.Errs {
 		res[i] = e.Error()
 	}
-	return strings.Join(res, es.Sep)
+	sep := es.Sep
+	if sep == "" {
+		sep = "; "
+	}
+	return strings.Join(res, sep)
 }
 
 // An error in a field of an object.

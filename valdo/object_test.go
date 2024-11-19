@@ -31,7 +31,7 @@ func isEq[T comparable](a, b T) {
 func TestObject_Validate_Map(t *testing.T) {
 	t.Parallel()
 	val := valdo.O(
-		valdo.P("name", valdo.S().Constrain(valdo.MinLength(2))),
+		valdo.P("name", valdo.S(valdo.MinLength(2))),
 		valdo.P("admin", valdo.B()),
 	)
 	noErr(valdo.Validate(val, []byte(`{"name": "aragorn", "admin": true}`)))
@@ -59,7 +59,7 @@ func TestObject_Schema(t *testing.T) {
 
 	{
 		val := valdo.O(
-			valdo.P("name", valdo.S().Constrain(valdo.MinLength(2))),
+			valdo.P("name", valdo.S(valdo.MinLength(2))),
 		)
 		res := string(valdo.Schema(val))
 		exp := `{"type":"object","properties":{"name":{"type":"string","minLength":2}},"required":["name"],"additionalProperties":false}`

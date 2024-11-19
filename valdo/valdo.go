@@ -6,12 +6,16 @@ import (
 	"github.com/orsinium-labs/jsony"
 )
 
+// One-letter abbreviations for engineers living on the edge.
 var (
 	O = Object
 	A = Array
 	P = Property
 	B = Bool
 	S = String
+	N = Null
+	F = Float64
+	I = Int
 )
 
 type Validator interface {

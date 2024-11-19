@@ -40,11 +40,11 @@ func (p PrimitiveType[T]) Schema() jsony.Object {
 	return res
 }
 
-func Bool() PrimitiveType[bool] {
+func Bool(cs ...Constraint[bool]) PrimitiveType[bool] {
 	return PrimitiveType[bool]{
 		val:  boolValidator,
 		name: "boolean",
-	}
+	}.Constrain(cs...)
 }
 
 func boolValidator(raw any) (bool, Error) {
@@ -53,16 +53,20 @@ func boolValidator(raw any) (bool, Error) {
 		return val, nil
 	case jsony.Bool:
 		return bool(val), nil
+	case *bool:
+		return *val, nil
+	case *jsony.Bool:
+		return bool(*val), nil
 	default:
 		return false, ErrType{Got: getTypeName(raw), Expected: "boolean"}
 	}
 }
 
-func String() PrimitiveType[string] {
+func String(cs ...Constraint[string]) PrimitiveType[string] {
 	return PrimitiveType[string]{
 		val:  stringValidator,
 		name: "string",
-	}
+	}.Constrain(cs...)
 }
 
 func stringValidator(raw any) (string, Error) {
@@ -80,11 +84,11 @@ func stringValidator(raw any) (string, Error) {
 	}
 }
 
-func Int() PrimitiveType[int] {
+func Int(cs ...Constraint[int]) PrimitiveType[int] {
 	return PrimitiveType[int]{
 		val:  intValidator,
 		name: "integer",
-	}
+	}.Constrain(cs...)
 }
 
 func intValidator(raw any) (int, Error) {
@@ -102,11 +106,11 @@ func intValidator(raw any) (int, Error) {
 	}
 }
 
-func Float64() PrimitiveType[float64] {
+func Float64(cs ...Constraint[float64]) PrimitiveType[float64] {
 	return PrimitiveType[float64]{
 		val:  float64Validator,
 		name: "number",
-	}
+	}.Constrain(cs...)
 }
 
 func float64Validator(raw any) (float64, Error) {

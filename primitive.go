@@ -53,11 +53,14 @@ func Bool() PrimitiveType[bool] {
 }
 
 func boolValidator(raw any) (bool, Error) {
-	val, isBool := raw.(bool)
-	if !isBool {
+	switch val := raw.(type) {
+	case bool:
+		return val, nil
+	case jsony.Bool:
+		return bool(val), nil
+	default:
 		return false, ErrType{Got: getTypeName(raw), Expected: "boolean"}
 	}
-	return val, nil
 }
 
 func String() PrimitiveType[string] {
@@ -68,11 +71,14 @@ func String() PrimitiveType[string] {
 }
 
 func stringValidator(raw any) (string, Error) {
-	val, isString := raw.(string)
-	if !isString {
+	switch val := raw.(type) {
+	case string:
+		return val, nil
+	case jsony.String:
+		return string(val), nil
+	default:
 		return "", ErrType{Got: getTypeName(raw), Expected: "string"}
 	}
-	return val, nil
 }
 
 func Int() PrimitiveType[int] {
@@ -83,6 +89,7 @@ func Int() PrimitiveType[int] {
 }
 
 func intValidator(raw any) (int, Error) {
+	// We allow not only int type but some integer types that can be safely cast.
 	switch val := raw.(type) {
 	case int:
 		return int(val), nil
@@ -92,19 +99,19 @@ func intValidator(raw any) (int, Error) {
 		return int(val), nil
 	case int32:
 		return int(val), nil
-	case int64:
-		return int(val), nil
-	case uintptr:
-		return int(val), nil
-	case uint:
-		return int(val), nil
 	case uint8:
 		return int(val), nil
-	case uint16:
+	case jsony.Int:
 		return int(val), nil
-	case uint32:
+	case jsony.Int8:
 		return int(val), nil
-	case uint64:
+	case jsony.Int16:
+		return int(val), nil
+	case jsony.Int32:
+		return int(val), nil
+	case jsony.UInt8:
+		return int(val), nil
+	case jsony.UInt16:
 		return int(val), nil
 	default:
 		return 0, ErrType{Got: getTypeName(raw), Expected: "integer"}

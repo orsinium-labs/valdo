@@ -1,8 +1,6 @@
 package valdo
 
 import (
-	"reflect"
-
 	"github.com/orsinium-labs/jsony"
 )
 
@@ -77,12 +75,12 @@ func (obj ObjectType) hasProperty(name string) bool {
 // 	}
 // }
 
-func (obj ObjectType) validateReflectStruct(data reflect.Value) Errors {
-	panic("todo")
-	// for i := range data.NumField() {
-	// 	field := data.Field(i)
-	// }
-}
+// func (obj ObjectType) validateReflectStruct(data reflect.Value) Errors {
+// 	panic("todo")
+// 	// for i := range data.NumField() {
+// 	// 	field := data.Field(i)
+// 	// }
+// }
 
 func (obj ObjectType) Schema() jsony.Object {
 	required := make(jsony.Array[jsony.String], 0)

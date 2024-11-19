@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/orsinium-labs/valdo"
+	"github.com/orsinium-labs/valdo/valdo"
 )
 
 func noErr(e error) {

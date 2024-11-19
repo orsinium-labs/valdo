@@ -74,8 +74,12 @@ func stringValidator(raw any) (string, Error) {
 	switch val := raw.(type) {
 	case string:
 		return val, nil
+	case *string:
+		return *val, nil
 	case jsony.String:
 		return string(val), nil
+	case *jsony.String:
+		return string(*val), nil
 	default:
 		return "", ErrType{Got: getTypeName(raw), Expected: "string"}
 	}
@@ -113,6 +117,28 @@ func intValidator(raw any) (int, Error) {
 		return int(val), nil
 	case jsony.UInt16:
 		return int(val), nil
+	case *int:
+		return int(*val), nil
+	case *int8:
+		return int(*val), nil
+	case *int16:
+		return int(*val), nil
+	case *int32:
+		return int(*val), nil
+	case *uint8:
+		return int(*val), nil
+	case *jsony.Int:
+		return int(*val), nil
+	case *jsony.Int8:
+		return int(*val), nil
+	case *jsony.Int16:
+		return int(*val), nil
+	case *jsony.Int32:
+		return int(*val), nil
+	case *jsony.UInt8:
+		return int(*val), nil
+	case *jsony.UInt16:
+		return int(*val), nil
 	default:
 		return 0, ErrType{Got: getTypeName(raw), Expected: "integer"}
 	}

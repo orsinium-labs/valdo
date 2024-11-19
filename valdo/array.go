@@ -1,5 +1,7 @@
 package valdo
 
+import "github.com/orsinium-labs/jsony"
+
 type ArrayType struct {
 	elem Validator
 }
@@ -36,14 +38,22 @@ func getTypeName(v any) string {
 	switch v.(type) {
 	case int, int8, int16, int32, int64:
 		return "integer"
+	case jsony.Int, jsony.Int8, jsony.Int16, jsony.Int32, jsony.Int64:
+		return "integer"
 	case uint, uint8, uint16, uint32, uint64, uintptr:
 		return "unsigned integer"
-	case bool:
+	case jsony.UInt, jsony.UInt8, jsony.UInt16, jsony.UInt32, jsony.UInt64:
+		return "unsigned integer"
+	case bool, jsony.Bool:
 		return "boolean"
-	case string:
+	case string, jsony.String:
 		return "string"
-	case float32, float64:
+	case float32, float64, jsony.Float32, jsony.Float64:
 		return "number"
+	case map[string]any, jsony.Object:
+		return "object"
+	case []any, jsony.MixedArray:
+		return "array"
 	default:
 		return ""
 	}

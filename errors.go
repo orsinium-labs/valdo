@@ -125,6 +125,18 @@ func (e ErrMultipleOf) Error() string {
 	return fmt.Sprintf(f, e.Value)
 }
 
+type ErrNot struct {
+	Format string
+}
+
+func (e ErrNot) Error() string {
+	f := e.Format
+	if f == "" {
+		f = "must not match the schema"
+	}
+	return f
+}
+
 type ErrMinimum struct {
 	Format string
 	Value  any

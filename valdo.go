@@ -6,6 +6,14 @@ import (
 	"github.com/orsinium-labs/jsony"
 )
 
+var (
+	O = Object
+	A = Array
+	P = Property
+	B = Bool
+	S = String
+)
+
 type Validator interface {
 	Validate(data any) Error
 	Schema() jsony.Object

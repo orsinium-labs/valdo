@@ -8,7 +8,6 @@ import (
 type PrimitiveType[T internal.Primitive] struct {
 	val  func(any) (T, Error)
 	cs   []Constraint[T]
-	meta []Meta
 	name string
 }
 
@@ -42,9 +41,6 @@ func (p PrimitiveType[T]) Schema() jsony.Object {
 	}
 	for _, c := range p.cs {
 		res = append(res, c.field)
-	}
-	for _, meta := range p.meta {
-		res = append(res, meta.field)
 	}
 	return res
 }

@@ -7,13 +7,13 @@ import (
 )
 
 type ObjectType struct {
-	ps    []Property
+	ps    []PropertyType
 	extra bool
 }
 
 var _ Validator = Object()
 
-func Object(ps ...Property) ObjectType {
+func Object(ps ...PropertyType) ObjectType {
 	return ObjectType{ps: ps}
 }
 
@@ -31,10 +31,10 @@ func (obj ObjectType) validateMap(data map[string]any) Error {
 	for _, p := range obj.ps {
 		val, found := data[p.name]
 		if !found {
-			if p.optional {
-				continue
+			if !p.optional {
+				res.Errs = append(res.Errs, ErrRequired{Name: p.name})
 			}
-			res.Errs = append(res.Errs, ErrRequired{Name: p.name})
+			continue
 		}
 		err := p.Validate(val)
 		if err != nil {
@@ -48,7 +48,7 @@ func (obj ObjectType) validateMap(data map[string]any) Error {
 			}
 		}
 	}
-	return res
+	return res.Flatten()
 }
 
 func (obj ObjectType) hasProperty(name string) bool {
@@ -103,22 +103,22 @@ func (obj ObjectType) Schema() jsony.Object {
 	return res
 }
 
-type Property struct {
+type PropertyType struct {
 	name      string
 	validator Validator
 	optional  bool
 }
 
-func P(name string, v Validator) Property {
-	return Property{name: name, validator: v}
+func Property(name string, v Validator) PropertyType {
+	return PropertyType{name: name, validator: v}
 }
 
-func (p Property) Optional() Property {
+func (p PropertyType) Optional() PropertyType {
 	p.optional = true
 	return p
 }
 
-func (p Property) Validate(data any) Error {
+func (p PropertyType) Validate(data any) Error {
 	err := p.validator.Validate(data)
 	if err != nil {
 		return ErrProperty{Name: p.name, Err: err}

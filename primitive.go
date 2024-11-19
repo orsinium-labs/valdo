@@ -53,20 +53,11 @@ func Bool() PrimitiveType[bool] {
 }
 
 func boolValidator(raw any) (bool, Error) {
-	switch val := raw.(type) {
-	case bool:
-		return val, nil
-	case string:
-		switch val {
-		case "true":
-			return true, nil
-		case "false":
-			return false, nil
-		}
-		return false, ErrType{Got: "string", Expected: "boolean"}
-	default:
+	val, isBool := raw.(bool)
+	if !isBool {
 		return false, ErrType{Got: getTypeName(raw), Expected: "boolean"}
 	}
+	return val, nil
 }
 
 func String() PrimitiveType[string] {
@@ -82,4 +73,40 @@ func stringValidator(raw any) (string, Error) {
 		return "", ErrType{Got: getTypeName(raw), Expected: "string"}
 	}
 	return val, nil
+}
+
+func Int() PrimitiveType[int] {
+	return PrimitiveType[int]{
+		val:  intValidator,
+		name: "integer",
+	}
+}
+
+func intValidator(raw any) (int, Error) {
+	switch val := raw.(type) {
+	case int:
+		return int(val), nil
+	case int8:
+		return int(val), nil
+	case int16:
+		return int(val), nil
+	case int32:
+		return int(val), nil
+	case int64:
+		return int(val), nil
+	case uintptr:
+		return int(val), nil
+	case uint:
+		return int(val), nil
+	case uint8:
+		return int(val), nil
+	case uint16:
+		return int(val), nil
+	case uint32:
+		return int(val), nil
+	case uint64:
+		return int(val), nil
+	default:
+		return 0, ErrType{Got: getTypeName(raw), Expected: "integer"}
+	}
 }

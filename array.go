@@ -45,6 +45,6 @@ func getTypeName(v any) string {
 	case float32, float64:
 		return "number"
 	default:
-		return "invalid type"
+		return ""
 	}
 }

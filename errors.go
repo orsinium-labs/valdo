@@ -77,7 +77,11 @@ func (e ErrType) Error() string {
 	if f == "" {
 		f = "invalid type: got %s, expected %s"
 	}
-	return fmt.Sprintf(f, e.Got, e.Expected)
+	got := e.Got
+	if got == "" {
+		got = "unknown type"
+	}
+	return fmt.Sprintf(f, got, e.Expected)
 }
 
 // An error indicating that a value is required but not found.

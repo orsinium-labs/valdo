@@ -127,3 +127,32 @@ func float64Validator(raw any) (float64, Error) {
 		return 0, ErrType{Got: getTypeName(raw), Expected: "number"}
 	}
 }
+
+type nullType struct{}
+
+func Null() Validator {
+	return nullType{}
+}
+
+func (n nullType) Validate(data any) error {
+	if data == nil {
+		return nil
+	}
+	switch val := data.(type) {
+	case []any:
+		if val == nil {
+			return nil
+		}
+	case map[string]any:
+		if val == nil {
+			return nil
+		}
+	}
+	return ErrType{Got: getTypeName(data)}
+}
+
+func (n nullType) Schema() jsony.Object {
+	return jsony.Object{
+		jsony.Field{K: "type", V: jsony.SafeString("null")},
+	}
+}

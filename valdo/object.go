@@ -58,30 +58,6 @@ func (obj ObjectType) hasProperty(name string) bool {
 	return false
 }
 
-// func (obj Object) validateReflect(data any) Errors {
-// 	val := reflect.ValueOf(data)
-// 	kind := val.Kind()
-// 	switch kind {
-// 	case reflect.Struct:
-// 		return obj.validateReflectStruct(val)
-// 	case reflect.Map:
-// 		panic("todo")
-// 	case reflect.Pointer:
-// 		panic("todo")
-// 	case reflect.Slice:
-// 		return newFieldError(obj.msg, "array")
-// 	default:
-// 		return newFieldError(obj.msg, kind.String())
-// 	}
-// }
-
-// func (obj ObjectType) validateReflectStruct(data reflect.Value) Errors {
-// 	panic("todo")
-// 	// for i := range data.NumField() {
-// 	// 	field := data.Field(i)
-// 	// }
-// }
-
 func (obj ObjectType) Schema() jsony.Object {
 	required := make(jsony.Array[jsony.String], 0)
 	properties := make(jsony.Map, 0)

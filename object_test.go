@@ -34,7 +34,7 @@ func TestObject_Validate_Map(t *testing.T) {
 		valdo.P("name", valdo.S().Constrain(valdo.MinLength(2))),
 		valdo.P("admin", valdo.B()),
 	)
-	noErr(valdo.Validate(val, []byte(`{"name": "aragorn", "admin": "true"}`)))
+	noErr(valdo.Validate(val, []byte(`{"name": "aragorn", "admin": true}`)))
 	isErr[valdo.ErrRequired](valdo.Validate(val, []byte(`{"name": "aragorn"}`)))
 	isErr[valdo.ErrProperty](valdo.Validate(val, []byte(`{"name": "", "admin": false}`)))
 	isErr[valdo.ErrProperty](valdo.Validate(val, []byte(`{"name": 123, "admin": false}`)))
@@ -53,7 +53,7 @@ func TestObject_Schema(t *testing.T) {
 			valdo.P("name", valdo.S()),
 		)
 		res := string(valdo.Schema(val))
-		exp := `{"type":"object","properties":{"name":{"type":"string"}},"required":["name"]}`
+		exp := `{"type":"object","properties":{"name":{"type":"string"}},"required":["name"],"additionalProperties":false}`
 		isEq(res, exp)
 	}
 
@@ -62,7 +62,7 @@ func TestObject_Schema(t *testing.T) {
 			valdo.P("name", valdo.S().Constrain(valdo.MinLength(2))),
 		)
 		res := string(valdo.Schema(val))
-		exp := `{"type":"object","properties":{"name":{"type":"string","minLength":2}},"required":["name"]}`
+		exp := `{"type":"object","properties":{"name":{"type":"string","minLength":2}},"required":["name"],"additionalProperties":false}`
 		isEq(res, exp)
 	}
 
@@ -71,7 +71,7 @@ func TestObject_Schema(t *testing.T) {
 			valdo.P("name", valdo.S()).Optional(),
 		)
 		res := string(valdo.Schema(val))
-		exp := `{"type":"object","properties":{"name":{"type":"string"}}}`
+		exp := `{"type":"object","properties":{"name":{"type":"string"}},"additionalProperties":false}`
 		isEq(res, exp)
 	}
 }

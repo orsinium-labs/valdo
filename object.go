@@ -100,6 +100,9 @@ func (obj ObjectType) Schema() jsony.Object {
 	if len(required) != 0 {
 		res = append(res, jsony.Field{K: "required", V: required})
 	}
+	if !obj.extra {
+		res = append(res, jsony.Field{K: "additionalProperties", V: jsony.False})
+	}
 	return res
 }
 

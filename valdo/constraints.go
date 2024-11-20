@@ -17,21 +17,22 @@ func jsonyNumber[T internal.Number](v T) jsony.Encoder {
 	case float32:
 		return jsony.Float32(v)
 	case float64:
-		return jsony.Float32(v)
+		return jsony.Float64(v)
 	default:
-		return jsony.I(v)
+		return jsony.Int(v)
 	}
 }
 
 // The value must be a multiple of the given number.
 //
 // https://json-schema.org/understanding-json-schema/reference/numeric#multiples
-func MultipleOf[T internal.Number](v T) Constraint[T] {
+func MultipleOf[T internal.Integer](v T) Constraint[T] {
 	if v <= 0 {
 		panic("the value must be positive")
 	}
 	c := func(f T) Error {
-		if f/v == 0 {
+		// TODO: support float64 as well
+		if f%v == 0 {
 			return nil
 		}
 		return ErrMultipleOf{Value: v}
@@ -186,7 +187,10 @@ func PropertyNames(cs ...Constraint[string]) Constraint[map[string]any] {
 		res := Errors{}
 		for _, c := range cs {
 			for name := range items {
-				res.Add(c.check(name))
+				err := c.check(name)
+				if err != nil {
+					res.Add(ErrPropertyNames{Name: name, Err: err})
+				}
 			}
 		}
 		return res.Flatten()

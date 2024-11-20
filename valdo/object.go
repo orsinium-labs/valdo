@@ -12,6 +12,10 @@ type ObjectType struct {
 	extraVal Validator
 }
 
+func Map(value Validator, cs ...Constraint[map[string]any]) ObjectType {
+	return Object().AllowExtra(value).Constrain(cs...)
+}
+
 // Object maps to "object" in JSON and "struct" or "map" in Go.
 func Object(ps ...PropertyType) ObjectType {
 	return ObjectType{ps: ps}
@@ -111,7 +115,10 @@ func (obj ObjectType) Schema() jsony.Object {
 		if !p.optional {
 			required = append(required, jsony.String(p.name))
 		}
-		properties[jsony.String(p.name)] = p.validator.Schema()
+		pSchema := p.validator.Schema()
+		if len(pSchema) > 0 {
+			properties[jsony.String(p.name)] = pSchema
+		}
 	}
 	res := jsony.Object{
 		jsony.Field{K: "type", V: jsony.SafeString("object")},

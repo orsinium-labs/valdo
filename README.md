@@ -10,6 +10,7 @@ Features:
 * User-freindly error messages.
 * Concurrency-safe, no global state.
 * Strict by default, without imlicit type casting.
+* Type-safe, thanks to generics.
 
 ## Installation
 

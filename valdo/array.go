@@ -51,7 +51,10 @@ func (a ArrayType) validateArray(data []any) Error {
 func (a ArrayType) Schema() jsony.Object {
 	res := jsony.Object{
 		jsony.Field{K: "type", V: jsony.SafeString("array")},
-		jsony.Field{K: "items", V: a.elem.Schema()},
+	}
+	items := a.elem.Schema()
+	if len(items) > 0 {
+		res = append(res, jsony.Field{K: "items", V: items})
 	}
 	for _, c := range a.cs {
 		res = append(res, c.field)

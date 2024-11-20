@@ -40,7 +40,7 @@ func Unmarshal[T any](v Validator, input []byte) (T, error) {
 }
 
 // Validate the given JSON.
-func Validate(v Validator, input []byte) Error {
+func Validate(v Validator, input []byte) error {
 	if len(input) == 0 {
 		return ErrNoInput{}
 	}

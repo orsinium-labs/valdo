@@ -21,10 +21,11 @@ func (p PrimitiveType[T]) Validate(raw any) Error {
 	if fErr != nil {
 		return fErr
 	}
+	res := Errors{}
 	for _, c := range p.cs {
-		fErr := c.check(val)
-		if fErr != nil {
-			return fErr
+		err := c.check(val)
+		if err != nil {
+			res.Errs = append(res.Errs, err)
 		}
 	}
 	return nil

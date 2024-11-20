@@ -6,6 +6,7 @@ import (
 
 type ObjectType struct {
 	ps    []PropertyType
+	cs    []Constraint[map[string]any]
 	extra bool
 }
 
@@ -13,6 +14,11 @@ var _ Validator = Object()
 
 func Object(ps ...PropertyType) ObjectType {
 	return ObjectType{ps: ps}
+}
+
+func (obj ObjectType) Constrain(cs ...Constraint[map[string]any]) ObjectType {
+	obj.cs = append(obj.cs, cs...)
+	return obj
 }
 
 func (obj ObjectType) Validate(data any) Error {
@@ -38,6 +44,12 @@ func (obj ObjectType) validateMap(data map[string]any) Error {
 			continue
 		}
 		err := p.Validate(val)
+		if err != nil {
+			res.Errs = append(res.Errs, err)
+		}
+	}
+	for _, c := range obj.cs {
+		err := c.check(data)
 		if err != nil {
 			res.Errs = append(res.Errs, err)
 		}

@@ -4,12 +4,18 @@ import "github.com/orsinium-labs/jsony"
 
 type ArrayType struct {
 	elem Validator
+	cs   []Constraint[[]any]
 }
 
-func Array(elem Validator) ArrayType {
+func Array(elem Validator, cs ...Constraint[[]any]) ArrayType {
 	return ArrayType{
 		elem: elem,
-	}
+	}.Constrain(cs...)
+}
+
+func (a ArrayType) Constrain(cs ...Constraint[[]any]) ArrayType {
+	a.cs = append(a.cs, cs...)
+	return a
 }
 
 func (a ArrayType) Validate(data any) Error {
@@ -25,13 +31,21 @@ func (a ArrayType) validateArray(data []any) Error {
 	if data == nil {
 		return ErrType{Got: "null", Expected: "array"}
 	}
+	res := Errors{}
 	for i, val := range data {
 		err := a.elem.Validate(val)
 		if err != nil {
-			return ErrIndex{Index: i, Err: err}
+			res.Errs = append(res.Errs, ErrIndex{Index: i, Err: err})
+			break
 		}
 	}
-	return nil
+	for _, c := range a.cs {
+		err := c.check(data)
+		if err != nil {
+			res.Errs = append(res.Errs, err)
+		}
+	}
+	return res.Flatten()
 }
 
 func (a ArrayType) Schema() jsony.Object {

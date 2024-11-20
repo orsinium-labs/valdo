@@ -180,3 +180,26 @@ func MaxItems(min uint) Constraint[[]any] {
 		field: jsony.Field{K: "maxItems", V: jsony.UInt(min)},
 	}
 }
+
+func PropertyNames(cs ...Constraint[string]) Constraint[map[string]any] {
+	c := func(items map[string]any) Error {
+		res := Errors{}
+		for _, c := range cs {
+			for name := range items {
+				err := c.check(name)
+				if err != nil {
+					res.Errs = append(res.Errs, err)
+				}
+			}
+		}
+		return res.Flatten()
+	}
+	schema := make(jsony.Object, len(cs))
+	for i, c := range cs {
+		schema[i] = c.field
+	}
+	return Constraint[map[string]any]{
+		check: c,
+		field: jsony.Field{K: "propertyNames", V: schema},
+	}
+}

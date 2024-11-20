@@ -265,3 +265,17 @@ func (e ErrMaxItems) Error() string {
 	}
 	return fmt.Sprintf(f, e.Value)
 }
+
+type ErrPropertyNames struct {
+	Format string
+	Name   string
+	Err    error
+}
+
+func (e ErrPropertyNames) Error() string {
+	f := e.Format
+	if f == "" {
+		f = "property name %s %v"
+	}
+	return fmt.Sprintf(f, e.Name, e.Err)
+}

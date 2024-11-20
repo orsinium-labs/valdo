@@ -189,15 +189,40 @@ func (e ErrExclMax) Error() string {
 	return fmt.Sprintf(f, e.Value)
 }
 
-type ErrMinLength struct {
+type ErrMinLen struct {
 	Format string
 	Value  int
 }
 
-func (e ErrMinLength) Error() string {
+func (e ErrMinLen) Error() string {
 	f := e.Format
 	if f == "" {
 		f = "must be at least %d characters long"
 	}
 	return fmt.Sprintf(f, e.Value)
+}
+
+type ErrMaxLen struct {
+	Format string
+	Value  int
+}
+
+func (e ErrMaxLen) Error() string {
+	f := e.Format
+	if f == "" {
+		f = "must be at most %d characters long"
+	}
+	return fmt.Sprintf(f, e.Value)
+}
+
+type ErrPattern struct {
+	Format string
+}
+
+func (e ErrPattern) Error() string {
+	f := e.Format
+	if f == "" {
+		f = "must match the pattern"
+	}
+	return f
 }

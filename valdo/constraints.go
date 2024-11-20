@@ -1,6 +1,8 @@
 package valdo
 
 import (
+	"regexp"
+
 	"github.com/orsinium-labs/jsony"
 	"github.com/orsinium-labs/valdo/internal"
 )
@@ -98,10 +100,38 @@ func MinLen(min uint) Constraint[string] {
 		if len(f) >= minInt {
 			return nil
 		}
-		return ErrMinLength{Value: minInt}
+		return ErrMinLen{Value: minInt}
 	}
 	return Constraint[string]{
 		check: c,
 		field: jsony.Field{K: "minLength", V: jsony.UInt(min)},
+	}
+}
+
+func MaxLen(min uint) Constraint[string] {
+	minInt := int(min)
+	c := func(f string) Error {
+		if len(f) <= minInt {
+			return nil
+		}
+		return ErrMaxLen{Value: minInt}
+	}
+	return Constraint[string]{
+		check: c,
+		field: jsony.Field{K: "maxLength", V: jsony.UInt(min)},
+	}
+}
+
+func Pattern(r string) Constraint[string] {
+	rex := regexp.MustCompile(r)
+	c := func(f string) Error {
+		if rex.MatchString(f) {
+			return nil
+		}
+		return ErrPattern{}
+	}
+	return Constraint[string]{
+		check: c,
+		field: jsony.Field{K: "pattern", V: jsony.String(r)},
 	}
 }

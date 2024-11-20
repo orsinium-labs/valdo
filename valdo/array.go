@@ -2,6 +2,7 @@ package valdo
 
 import "github.com/orsinium-labs/jsony"
 
+// ArrayType is constructed by [Array].
 type ArrayType struct {
 	elem Validator
 	cs   []Constraint[[]any]
@@ -18,6 +19,7 @@ func (a ArrayType) Constrain(cs ...Constraint[[]any]) ArrayType {
 	return a
 }
 
+// Validate implements [Validator].
 func (a ArrayType) Validate(data any) Error {
 	switch d := data.(type) {
 	case []any:
@@ -45,6 +47,7 @@ func (a ArrayType) validateArray(data []any) Error {
 	return res.Flatten()
 }
 
+// Schema implements [Validator].
 func (a ArrayType) Schema() jsony.Object {
 	res := jsony.Object{
 		jsony.Field{K: "type", V: jsony.SafeString("array")},

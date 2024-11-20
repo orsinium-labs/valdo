@@ -23,9 +23,9 @@ func jsonyNumber[T internal.Number](v T) jsony.Encoder {
 	}
 }
 
-// A numeric instance is valid only if division by this keyword's value results in an integer.
+// The value must be a multiple of the given number.
 //
-// https://json-schema.org/draft/2020-12/json-schema-validation#name-multipleof
+// https://json-schema.org/understanding-json-schema/reference/numeric#multiples
 func MultipleOf[T internal.Number](v T) Constraint[T] {
 	if v <= 0 {
 		panic("the value must be positive")

@@ -5,17 +5,20 @@ import (
 	"github.com/orsinium-labs/valdo/internal"
 )
 
+// PrimitiveType is constructed by [Bool], [String], [Int], or [Float64].
 type PrimitiveType[T internal.Primitive] struct {
 	val  func(any) (T, Error)
 	cs   []Constraint[T]
 	name string
 }
 
+// Constrain adds constraints to the primitive, like [Min].
 func (p PrimitiveType[T]) Constrain(cs ...Constraint[T]) PrimitiveType[T] {
 	p.cs = append(p.cs, cs...)
 	return p
 }
 
+// Validate implements [Validator].
 func (p PrimitiveType[T]) Validate(raw any) Error {
 	val, fErr := p.val(raw)
 	if fErr != nil {
@@ -28,6 +31,7 @@ func (p PrimitiveType[T]) Validate(raw any) Error {
 	return res.Flatten()
 }
 
+// Schema implements [Validator].
 func (p PrimitiveType[T]) Schema() jsony.Object {
 	res := jsony.Object{
 		jsony.Field{K: "type", V: jsony.String(p.name)},
@@ -38,6 +42,7 @@ func (p PrimitiveType[T]) Schema() jsony.Object {
 	return res
 }
 
+// Bool maps to "boolean" in JSON and "bool" in Go.
 func Bool(cs ...Constraint[bool]) PrimitiveType[bool] {
 	return PrimitiveType[bool]{
 		val:  boolValidator,
@@ -60,6 +65,7 @@ func boolValidator(raw any) (bool, Error) {
 	}
 }
 
+// String maps to "string" in JSON and "string" in Go.
 func String(cs ...Constraint[string]) PrimitiveType[string] {
 	return PrimitiveType[string]{
 		val:  stringValidator,
@@ -82,6 +88,7 @@ func stringValidator(raw any) (string, Error) {
 	}
 }
 
+// Int maps to "number" in JSON ("integer" in JSON Schema) and "int" in Go.
 func Int(cs ...Constraint[int]) PrimitiveType[int] {
 	return PrimitiveType[int]{
 		val:  intValidator,
@@ -104,6 +111,7 @@ func intValidator(raw any) (int, Error) {
 	}
 }
 
+// Float64 maps to "number" in JSON and "float64" in Go.
 func Float64(cs ...Constraint[float64]) PrimitiveType[float64] {
 	return PrimitiveType[float64]{
 		val:  float64Validator,
@@ -130,12 +138,15 @@ func float64Validator(raw any) (float64, Error) {
 	}
 }
 
+// nullType is constructed by [Null].
 type nullType struct{}
 
+// Null maps to "null" in JSON and "nil" in Go.
 func Null() Validator {
 	return nullType{}
 }
 
+// Validate implements [Validator].
 func (n nullType) Validate(data any) Error {
 	if data == nil {
 		return nil
@@ -153,6 +164,7 @@ func (n nullType) Validate(data any) Error {
 	return ErrType{Got: getTypeName(data)}
 }
 
+// Schema implements [Validator].
 func (n nullType) Schema() jsony.Object {
 	return jsony.Object{
 		jsony.Field{K: "type", V: jsony.SafeString("null")},
@@ -161,14 +173,17 @@ func (n nullType) Schema() jsony.Object {
 
 type anyType struct{}
 
+// Any is a value of any type.
 func Any() Validator {
 	return anyType{}
 }
 
+// Validate implements [Validator].
 func (n anyType) Validate(data any) Error {
 	return nil
 }
 
+// Schema implements [Validator].
 func (n anyType) Schema() jsony.Object {
 	return jsony.Object{}
 }

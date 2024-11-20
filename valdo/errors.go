@@ -15,6 +15,7 @@ type Errors struct {
 	Errs []Error
 }
 
+// Add the given error (if not nil) to the list of errors.
 func (es *Errors) Add(err Error) {
 	if err != nil {
 		es.Errs = append(es.Errs, err)
@@ -31,6 +32,7 @@ func (es Errors) Flatten() Error {
 	return es
 }
 
+// Error implements [error] interface.
 func (es Errors) Error() string {
 	res := make([]string, len(es.Errs))
 	for i, e := range es.Errs {
@@ -43,6 +45,7 @@ func (es Errors) Error() string {
 	return strings.Join(res, sep)
 }
 
+// Unwrap makes errors.Is work.
 func (es Errors) Unwrap() []error {
 	res := make([]error, len(es.Errs))
 	for i, subErr := range es.Errs {
@@ -58,6 +61,7 @@ type ErrProperty struct {
 	Err    Error
 }
 
+// Error implements [error] interface.
 func (e ErrProperty) Error() string {
 	f := e.Format
 	if f == "" {
@@ -77,6 +81,7 @@ type ErrIndex struct {
 	Err    Error
 }
 
+// Error implements [error] interface.
 func (e ErrIndex) Error() string {
 	f := e.Format
 	if f == "" {
@@ -96,6 +101,7 @@ type ErrType struct {
 	Expected string
 }
 
+// Error implements [error] interface.
 func (e ErrType) Error() string {
 	f := e.Format
 	if f == "" {
@@ -114,6 +120,7 @@ type ErrRequired struct {
 	Name   string
 }
 
+// Error implements [error] interface.
 func (e ErrRequired) Error() string {
 	f := e.Format
 	if f == "" {
@@ -128,6 +135,7 @@ type ErrUnexpected struct {
 	Name   string
 }
 
+// Error implements [error] interface.
 func (e ErrUnexpected) Error() string {
 	f := e.Format
 	if f == "" {
@@ -141,6 +149,7 @@ type ErrMultipleOf struct {
 	Value  any
 }
 
+// Error implements [error] interface.
 func (e ErrMultipleOf) Error() string {
 	f := e.Format
 	if f == "" {
@@ -153,6 +162,7 @@ type ErrNot struct {
 	Format string
 }
 
+// Error implements [error] interface.
 func (e ErrNot) Error() string {
 	f := e.Format
 	if f == "" {
@@ -166,6 +176,7 @@ type ErrMin struct {
 	Value  any
 }
 
+// Error implements [error] interface.
 func (e ErrMin) Error() string {
 	f := e.Format
 	if f == "" {
@@ -179,6 +190,7 @@ type ErrExclMin struct {
 	Value  any
 }
 
+// Error implements [error] interface.
 func (e ErrExclMin) Error() string {
 	f := e.Format
 	if f == "" {
@@ -192,6 +204,7 @@ type ErrMax struct {
 	Value  any
 }
 
+// Error implements [error] interface.
 func (e ErrMax) Error() string {
 	f := e.Format
 	if f == "" {
@@ -205,6 +218,7 @@ type ErrExclMax struct {
 	Value  any
 }
 
+// Error implements [error] interface.
 func (e ErrExclMax) Error() string {
 	f := e.Format
 	if f == "" {
@@ -218,6 +232,7 @@ type ErrMinLen struct {
 	Value  int
 }
 
+// Error implements [error] interface.
 func (e ErrMinLen) Error() string {
 	f := e.Format
 	if f == "" {
@@ -231,6 +246,7 @@ type ErrMaxLen struct {
 	Value  int
 }
 
+// Error implements [error] interface.
 func (e ErrMaxLen) Error() string {
 	f := e.Format
 	if f == "" {
@@ -243,6 +259,7 @@ type ErrPattern struct {
 	Format string
 }
 
+// Error implements [error] interface.
 func (e ErrPattern) Error() string {
 	f := e.Format
 	if f == "" {
@@ -256,6 +273,7 @@ type ErrContains struct {
 	Err    error
 }
 
+// Error implements [error] interface.
 func (e ErrContains) Error() string {
 	f := e.Format
 	if f == "" {
@@ -273,6 +291,7 @@ type ErrMinItems struct {
 	Value  int
 }
 
+// Error implements [error] interface.
 func (e ErrMinItems) Error() string {
 	f := e.Format
 	if f == "" {
@@ -286,6 +305,7 @@ type ErrMaxItems struct {
 	Value  int
 }
 
+// Error implements [error] interface.
 func (e ErrMaxItems) Error() string {
 	f := e.Format
 	if f == "" {
@@ -300,6 +320,7 @@ type ErrPropertyNames struct {
 	Err    error
 }
 
+// Error implements [error] interface.
 func (e ErrPropertyNames) Error() string {
 	f := e.Format
 	if f == "" {
@@ -317,6 +338,7 @@ type ErrMinProperties struct {
 	Value  int
 }
 
+// Error implements [error] interface.
 func (e ErrMinProperties) Error() string {
 	f := e.Format
 	if f == "" {
@@ -330,6 +352,7 @@ type ErrMaxProperties struct {
 	Value  int
 }
 
+// Error implements [error] interface.
 func (e ErrMaxProperties) Error() string {
 	f := e.Format
 	if f == "" {

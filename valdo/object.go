@@ -4,6 +4,7 @@ import (
 	"github.com/orsinium-labs/jsony"
 )
 
+// ObjectType is constructed by [Object].
 type ObjectType struct {
 	ps       []PropertyType
 	cs       []Constraint[map[string]any]
@@ -11,23 +12,35 @@ type ObjectType struct {
 	extraVal Validator
 }
 
-var _ Validator = Object()
-
+// Object maps to "object" in JSON and "struct" or "map" in Go.
 func Object(ps ...PropertyType) ObjectType {
 	return ObjectType{ps: ps}
 }
 
+// Add constraints to the object.
+//
+// One of:
+//
+//   - [PropertyNames]
+//   - [MinProperties]
+//   - [MaxProperties]
 func (obj ObjectType) Constrain(cs ...Constraint[map[string]any]) ObjectType {
 	obj.cs = append(obj.cs, cs...)
 	return obj
 }
 
+// Allow additional properties.
+//
+// The validator, if not nil, will be used to validate the additional properties.
+//
+// https://json-schema.org/understanding-json-schema/reference/object#additionalproperties
 func (obj ObjectType) AllowExtra(v Validator) ObjectType {
 	obj.extra = true
 	obj.extraVal = v
 	return obj
 }
 
+// Validate implements [Validator].
 func (obj ObjectType) Validate(data any) Error {
 	switch d := data.(type) {
 	case map[string]any:
@@ -90,6 +103,7 @@ func (obj ObjectType) hasProperty(name string) bool {
 	return false
 }
 
+// Schema implements [Validator].
 func (obj ObjectType) Schema() jsony.Object {
 	required := make(jsony.Array[jsony.String], 0)
 	properties := make(jsony.Map, 0)
@@ -134,6 +148,7 @@ func (obj ObjectType) Schema() jsony.Object {
 	return res
 }
 
+// PropertyType is constructed by [Property].
 type PropertyType struct {
 	name      string
 	validator Validator
@@ -141,21 +156,31 @@ type PropertyType struct {
 	depReq    []string
 }
 
+// Property is a key-value pair of an [Object].
 func Property(name string, v Validator) PropertyType {
 	return PropertyType{name: name, validator: v}
 }
 
+// Mark the property as optional.
+//
+// By default, all properties listed in the object are required.
+//
+// https://json-schema.org/understanding-json-schema/reference/object#required
 func (p PropertyType) Optional() PropertyType {
 	p.optional = true
 	return p
 }
 
-func (p PropertyType) IfPresentThenRequire(name string, names ...string) PropertyType {
+// If the property is present, require also the given properties to be present.
+//
+// https://json-schema.org/understanding-json-schema/reference/conditionals#dependentRequired
+func (p PropertyType) AlsoRequire(name string, names ...string) PropertyType {
 	p.depReq = append(p.depReq, name)
 	p.depReq = append(p.depReq, names...)
 	return p
 }
 
+// Validate implements [Validator].
 func (p PropertyType) validate(data any) Error {
 	err := p.validator.Validate(data)
 	if err != nil {

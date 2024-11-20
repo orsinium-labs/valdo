@@ -10,6 +10,7 @@ func AllOf(vs ...Validator) Validator {
 	return allOf{vs: vs}
 }
 
+// Validate implements [Validator].
 func (n allOf) Validate(data any) Error {
 	for _, v := range n.vs {
 		err := v.Validate(data)
@@ -20,6 +21,7 @@ func (n allOf) Validate(data any) Error {
 	return nil
 }
 
+// Schema implements [Validator].
 func (n allOf) Schema() jsony.Object {
 	ss := make(jsony.Array[jsony.Object], len(n.vs))
 	for i, v := range n.vs {
@@ -38,6 +40,7 @@ func Not(v Validator) Validator {
 	return notType{v: v}
 }
 
+// Validate implements [Validator].
 func (n notType) Validate(data any) Error {
 	err := n.v.Validate(data)
 	if err == nil {
@@ -46,6 +49,7 @@ func (n notType) Validate(data any) Error {
 	return nil
 }
 
+// Schema implements [Validator].
 func (n notType) Schema() jsony.Object {
 	return jsony.Object{
 		jsony.Field{K: "not", V: n.v.Schema()},

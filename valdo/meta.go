@@ -12,10 +12,12 @@ type Meta struct {
 	// Examples    []any
 }
 
+// Validate implements [Validator].
 func (m Meta) Validate(data any) Error {
 	return m.Validator.Validate(data)
 }
 
+// Schema implements [Validator].
 func (m Meta) Schema() jsony.Object {
 	s := m.Validator.Schema()
 	if m.Comment != "" {

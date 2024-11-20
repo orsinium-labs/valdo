@@ -9,6 +9,7 @@ Features:
 * No code generation, no reflection, no unsafe code.
 * User-freindly error messages.
 * Concurrency-safe, no global state.
+* Strict by default, without imlicit type casting.
 
 ## Installation
 

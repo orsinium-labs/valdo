@@ -23,6 +23,7 @@ type Validator interface {
 	Schema() jsony.Object
 }
 
+// Schema generates JSON Schema for the validator.
 func Schema(v Validator) []byte {
 	return jsony.EncodeBytes(v.Schema())
 }

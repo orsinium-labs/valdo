@@ -136,7 +136,7 @@ func Null() Validator {
 	return nullType{}
 }
 
-func (n nullType) Validate(data any) error {
+func (n nullType) Validate(data any) Error {
 	if data == nil {
 		return nil
 	}
@@ -165,7 +165,7 @@ func Any() Validator {
 	return anyType{}
 }
 
-func (n anyType) Validate(data any) error {
+func (n anyType) Validate(data any) Error {
 	return nil
 }
 

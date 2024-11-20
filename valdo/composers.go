@@ -10,7 +10,7 @@ func AllOf(vs ...Validator) Validator {
 	return allOf{vs: vs}
 }
 
-func (n allOf) Validate(data any) error {
+func (n allOf) Validate(data any) Error {
 	for _, v := range n.vs {
 		err := v.Validate(data)
 		if err != nil {
@@ -38,7 +38,7 @@ func Not(v Validator) Validator {
 	return notType{v: v}
 }
 
-func (n notType) Validate(data any) error {
+func (n notType) Validate(data any) Error {
 	err := n.v.Validate(data)
 	if err == nil {
 		return ErrNot{}

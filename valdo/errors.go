@@ -5,7 +5,9 @@ import (
 	"strings"
 )
 
-type Error = error
+type Error interface {
+	error
+}
 
 // A collection of multiple errors.
 type Errors struct {
@@ -41,6 +43,14 @@ func (es Errors) Error() string {
 	return strings.Join(res, sep)
 }
 
+func (es Errors) Unwrap() []error {
+	res := make([]error, len(es.Errs))
+	for i, subErr := range es.Errs {
+		res[i] = subErr
+	}
+	return res
+}
+
 // An error in a field of an object.
 type ErrProperty struct {
 	Format string
@@ -56,6 +66,10 @@ func (e ErrProperty) Error() string {
 	return fmt.Sprintf(f, e.Name, e.Err)
 }
 
+func (e ErrProperty) Unwrap() error {
+	return e.Err
+}
+
 // An error in an element of an array.
 type ErrIndex struct {
 	Format string
@@ -69,6 +83,10 @@ func (e ErrIndex) Error() string {
 		f = "at %d: %v"
 	}
 	return fmt.Sprintf(f, e.Index, e.Err)
+}
+
+func (e ErrIndex) Unwrap() error {
+	return e.Err
 }
 
 // An error indicating a value of an unexpected type.
@@ -246,6 +264,10 @@ func (e ErrContains) Error() string {
 	return fmt.Sprintf(f, e.Err)
 }
 
+func (e ErrContains) Unwrap() error {
+	return e.Err
+}
+
 type ErrMinItems struct {
 	Format string
 	Value  int
@@ -284,6 +306,10 @@ func (e ErrPropertyNames) Error() string {
 		f = "property name %s %v"
 	}
 	return fmt.Sprintf(f, e.Name, e.Err)
+}
+
+func (e ErrPropertyNames) Unwrap() error {
+	return e.Err
 }
 
 type ErrMinProperties struct {

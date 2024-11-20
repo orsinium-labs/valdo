@@ -6,7 +6,7 @@ import (
 	"github.com/orsinium-labs/jsony"
 )
 
-// One-letter abbreviations for engineers living on the edge.
+// One-letter abbreviations for people living on the edge.
 var (
 	O = Object
 	A = Array
@@ -27,15 +27,18 @@ func Schema(v Validator) []byte {
 	return jsony.EncodeBytes(v.Schema())
 }
 
-// Read the input JSON, validate it, and put the data into the given target.
-func Unmarshal[T any](v Validator, input []byte, target *T) error {
+// Read the input JSON, validate it, and unmarshal into the given type.
+func Unmarshal[T any](v Validator, input []byte) (T, error) {
+	var target T
 	err := Validate(v, input)
 	if err != nil {
-		return err
+		return target, err
 	}
-	return json.Unmarshal(input, target)
+	err = json.Unmarshal(input, &target)
+	return target, err
 }
 
+// Validate the given JSON.
 func Validate(v Validator, input []byte) Error {
 	if len(input) == 0 {
 		return ErrNoInput{}

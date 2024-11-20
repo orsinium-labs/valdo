@@ -23,10 +23,7 @@ func (p PrimitiveType[T]) Validate(raw any) Error {
 	}
 	res := Errors{}
 	for _, c := range p.cs {
-		err := c.check(val)
-		if err != nil {
-			res.Errs = append(res.Errs, err)
-		}
+		res.Add(c.check(val))
 	}
 	return nil
 }

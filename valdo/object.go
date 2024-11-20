@@ -46,33 +46,27 @@ func (obj ObjectType) validateMap(data map[string]any) Error {
 		val, found := data[p.name]
 		if !found {
 			if !p.optional {
-				res.Errs = append(res.Errs, ErrRequired{Name: p.name})
+				res.Add(ErrRequired{Name: p.name})
 			}
 			continue
 		}
-		err := p.Validate(val)
-		if err != nil {
-			res.Errs = append(res.Errs, err)
-		}
+		res.Add(p.Validate(val))
 	}
 	for _, c := range obj.cs {
-		err := c.check(data)
-		if err != nil {
-			res.Errs = append(res.Errs, err)
-		}
+		res.Add(c.check(data))
 	}
 	if obj.extraVal != nil {
 		for name, val := range data {
 			if !obj.hasProperty(name) {
 				err := obj.extraVal.Validate(val)
-				res.Errs = append(res.Errs, ErrProperty{Name: name, Err: err})
+				res.Add(ErrProperty{Name: name, Err: err})
 			}
 		}
 	}
 	if !obj.extra {
 		for name := range data {
 			if !obj.hasProperty(name) {
-				res.Errs = append(res.Errs, ErrUnexpected{Name: name})
+				res.Add(ErrUnexpected{Name: name})
 			}
 		}
 	}

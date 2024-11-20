@@ -35,15 +35,12 @@ func (a ArrayType) validateArray(data []any) Error {
 	for i, val := range data {
 		err := a.elem.Validate(val)
 		if err != nil {
-			res.Errs = append(res.Errs, ErrIndex{Index: i, Err: err})
+			res.Add(ErrIndex{Index: i, Err: err})
 			break
 		}
 	}
 	for _, c := range a.cs {
-		err := c.check(data)
-		if err != nil {
-			res.Errs = append(res.Errs, err)
-		}
+		res.Add(c.check(data))
 	}
 	return res.Flatten()
 }

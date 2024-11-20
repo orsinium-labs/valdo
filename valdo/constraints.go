@@ -186,10 +186,7 @@ func PropertyNames(cs ...Constraint[string]) Constraint[map[string]any] {
 		res := Errors{}
 		for _, c := range cs {
 			for name := range items {
-				err := c.check(name)
-				if err != nil {
-					res.Errs = append(res.Errs, err)
-				}
+				res.Add(c.check(name))
 			}
 		}
 		return res.Flatten()

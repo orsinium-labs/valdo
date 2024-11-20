@@ -13,6 +13,12 @@ type Errors struct {
 	Errs []Error
 }
 
+func (es *Errors) Add(err Error) {
+	if err != nil {
+		es.Errs = append(es.Errs, err)
+	}
+}
+
 func (es Errors) Flatten() Error {
 	if len(es.Errs) == 0 {
 		return nil

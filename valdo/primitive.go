@@ -1,6 +1,8 @@
 package valdo
 
 import (
+	"math"
+
 	"github.com/orsinium-labs/jsony"
 	"github.com/orsinium-labs/valdo/internal"
 )
@@ -100,6 +102,11 @@ func intValidator(raw any) (int, Error) {
 	switch val := raw.(type) {
 	case int:
 		return val, nil
+	case float64:
+		if math.Floor(val) == val {
+			return int(val), nil
+		}
+		return 0, ErrType{Got: "number", Expected: "integer"}
 	case jsony.Int:
 		return int(val), nil
 	case *int:

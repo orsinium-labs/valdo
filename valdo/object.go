@@ -180,7 +180,6 @@ func (p PropertyType) AlsoRequire(name string, names ...string) PropertyType {
 	return p
 }
 
-// Validate implements [Validator].
 func (p PropertyType) validate(data any) Error {
 	err := p.validator.Validate(data)
 	if err != nil {

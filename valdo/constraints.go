@@ -40,12 +40,12 @@ func MultipleOf[T internal.Number](v T) Constraint[T] {
 	}
 }
 
-func Minimum[T internal.Number](v T) Constraint[T] {
+func Min[T internal.Number](v T) Constraint[T] {
 	c := func(f T) Error {
 		if f >= v {
 			return nil
 		}
-		return ErrMinimum{Value: v}
+		return ErrMin{Value: v}
 	}
 	return Constraint[T]{
 		check: c,
@@ -53,7 +53,46 @@ func Minimum[T internal.Number](v T) Constraint[T] {
 	}
 }
 
-func MinLength(min uint) Constraint[string] {
+func ExclMin[T internal.Number](v T) Constraint[T] {
+	c := func(f T) Error {
+		if f > v {
+			return nil
+		}
+		return ErrExclMin{Value: v}
+	}
+	return Constraint[T]{
+		check: c,
+		field: jsony.Field{K: "exclusiveMinimum", V: jsonyNumber(v)},
+	}
+}
+
+func Max[T internal.Number](v T) Constraint[T] {
+	c := func(f T) Error {
+		if f <= v {
+			return nil
+		}
+		return ErrMax{Value: v}
+	}
+	return Constraint[T]{
+		check: c,
+		field: jsony.Field{K: "maximum", V: jsonyNumber(v)},
+	}
+}
+
+func ExclMax[T internal.Number](v T) Constraint[T] {
+	c := func(f T) Error {
+		if f < v {
+			return nil
+		}
+		return ErrExclMax{Value: v}
+	}
+	return Constraint[T]{
+		check: c,
+		field: jsony.Field{K: "exclusiveMaximum", V: jsonyNumber(v)},
+	}
+}
+
+func MinLen(min uint) Constraint[string] {
 	minInt := int(min)
 	c := func(f string) Error {
 		if len(f) >= minInt {

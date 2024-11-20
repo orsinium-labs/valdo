@@ -13,7 +13,7 @@ const (
 	BtcAddressLowerBech32 = `^bc1[02-9ac-hj-np-z]{7,76}$`       // bitcoin bech32 address https://en.bitcoin.it/wiki/Bech32
 	BtcAddressUpperBech32 = `^BC1[02-9AC-HJ-NP-Z]{7,76}$`       // bitcoin bech32 address https://en.bitcoin.it/wiki/Bech32
 	Cron                  = `(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\d+(ns|us|µs|ms|s|m|h))+)|((((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*) ?){5,7})`
-	Cve                   = `^CVE-(1999|2\d{3})-(0[^0]\d{2}|0\d[^0]\d{1}|0\d{2}[^0]|[1-9]{1}\d{3,})$` // CVE Format Id https://cve.mitre.org/cve/identifiers/syntaxchange.html
+	CVE                   = `^CVE-(1999|2\d{3})-(0[^0]\d{2}|0\d[^0]\d{1}|0\d{2}[^0]|[1-9]{1}\d{3,})$` // CVE Format Id https://cve.mitre.org/cve/identifiers/syntaxchange.html
 	DataURI               = `^data:((?:\w+\/(?:([^;]|;[^;]).)+)?)`
 	DnsRFC1035Label       = "^[a-z]([-a-z0-9]*[a-z0-9]){0,62}$"
 	E164                  = "^\\+[1-9]?[0-9]{7,14}$"

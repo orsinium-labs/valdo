@@ -137,15 +137,54 @@ func (e ErrNot) Error() string {
 	return f
 }
 
-type ErrMinimum struct {
+type ErrMin struct {
 	Format string
 	Value  any
 }
 
-func (e ErrMinimum) Error() string {
+func (e ErrMin) Error() string {
 	f := e.Format
 	if f == "" {
 		f = "must be greater than or equal to %v"
+	}
+	return fmt.Sprintf(f, e.Value)
+}
+
+type ErrExclMin struct {
+	Format string
+	Value  any
+}
+
+func (e ErrExclMin) Error() string {
+	f := e.Format
+	if f == "" {
+		f = "must be greater than %v"
+	}
+	return fmt.Sprintf(f, e.Value)
+}
+
+type ErrMax struct {
+	Format string
+	Value  any
+}
+
+func (e ErrMax) Error() string {
+	f := e.Format
+	if f == "" {
+		f = "must be less than or equal to %v"
+	}
+	return fmt.Sprintf(f, e.Value)
+}
+
+type ErrExclMax struct {
+	Format string
+	Value  any
+}
+
+func (e ErrExclMax) Error() string {
+	f := e.Format
+	if f == "" {
+		f = "must be less than %v"
 	}
 	return fmt.Sprintf(f, e.Value)
 }

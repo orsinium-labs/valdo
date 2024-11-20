@@ -5,9 +5,10 @@ import (
 )
 
 type ObjectType struct {
-	ps    []PropertyType
-	cs    []Constraint[map[string]any]
-	extra bool
+	ps       []PropertyType
+	cs       []Constraint[map[string]any]
+	extra    bool
+	extraVal Validator
 }
 
 var _ Validator = Object()
@@ -18,6 +19,12 @@ func Object(ps ...PropertyType) ObjectType {
 
 func (obj ObjectType) Constrain(cs ...Constraint[map[string]any]) ObjectType {
 	obj.cs = append(obj.cs, cs...)
+	return obj
+}
+
+func (obj ObjectType) AllowExtra(v Validator) ObjectType {
+	obj.extra = true
+	obj.extraVal = v
 	return obj
 }
 
@@ -52,6 +59,14 @@ func (obj ObjectType) validateMap(data map[string]any) Error {
 		err := c.check(data)
 		if err != nil {
 			res.Errs = append(res.Errs, err)
+		}
+	}
+	if obj.extraVal != nil {
+		for name, val := range data {
+			if !obj.hasProperty(name) {
+				err := obj.extraVal.Validate(val)
+				res.Errs = append(res.Errs, ErrProperty{Name: name, Err: err})
+			}
 		}
 	}
 	if !obj.extra {
@@ -91,7 +106,9 @@ func (obj ObjectType) Schema() jsony.Object {
 	if len(required) != 0 {
 		res = append(res, jsony.Field{K: "required", V: required})
 	}
-	if !obj.extra {
+	if obj.extraVal != nil {
+		res = append(res, jsony.Field{K: "additionalProperties", V: obj.extraVal.Schema()})
+	} else if !obj.extra {
 		res = append(res, jsony.Field{K: "additionalProperties", V: jsony.False})
 	}
 	for _, c := range obj.cs {

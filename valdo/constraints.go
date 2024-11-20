@@ -135,3 +135,48 @@ func Pattern(r string) Constraint[string] {
 		field: jsony.Field{K: "pattern", V: jsony.String(r)},
 	}
 }
+
+func Contains(v Validator) Constraint[[]any] {
+	c := func(items []any) Error {
+		var err Error
+		for _, item := range items {
+			err = v.Validate(item)
+			if err == nil {
+				return nil
+			}
+		}
+		return ErrContains{Err: err}
+	}
+	return Constraint[[]any]{
+		check: c,
+		field: jsony.Field{K: "contains", V: v.Schema()},
+	}
+}
+
+func MinItems(min uint) Constraint[[]any] {
+	minInt := int(min)
+	c := func(f []any) Error {
+		if len(f) >= minInt {
+			return nil
+		}
+		return ErrMinItems{Value: minInt}
+	}
+	return Constraint[[]any]{
+		check: c,
+		field: jsony.Field{K: "minItems", V: jsony.UInt(min)},
+	}
+}
+
+func MaxItems(min uint) Constraint[[]any] {
+	minInt := int(min)
+	c := func(f []any) Error {
+		if len(f) <= minInt {
+			return nil
+		}
+		return ErrMaxItems{Value: minInt}
+	}
+	return Constraint[[]any]{
+		check: c,
+		field: jsony.Field{K: "maxItems", V: jsony.UInt(min)},
+	}
+}

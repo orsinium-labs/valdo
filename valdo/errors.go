@@ -226,3 +226,42 @@ func (e ErrPattern) Error() string {
 	}
 	return f
 }
+
+type ErrContains struct {
+	Format string
+	Err    error
+}
+
+func (e ErrContains) Error() string {
+	f := e.Format
+	if f == "" {
+		f = "at least one item %v"
+	}
+	return fmt.Sprintf(f, e.Err)
+}
+
+type ErrMinItems struct {
+	Format string
+	Value  int
+}
+
+func (e ErrMinItems) Error() string {
+	f := e.Format
+	if f == "" {
+		f = "must contain at least %d items"
+	}
+	return fmt.Sprintf(f, e.Value)
+}
+
+type ErrMaxItems struct {
+	Format string
+	Value  int
+}
+
+func (e ErrMaxItems) Error() string {
+	f := e.Format
+	if f == "" {
+		f = "must contain at most %d items"
+	}
+	return fmt.Sprintf(f, e.Value)
+}

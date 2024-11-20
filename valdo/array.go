@@ -31,6 +31,13 @@ func (a ArrayType) validateArray(data []any) Error {
 	return nil
 }
 
+func (a ArrayType) Schema() jsony.Object {
+	return jsony.Object{
+		jsony.Field{K: "type", V: jsony.SafeString("array")},
+		jsony.Field{K: "items", V: a.elem.Schema()},
+	}
+}
+
 func getTypeName(v any) string {
 	if v == nil {
 		return "null"

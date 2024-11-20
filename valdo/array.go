@@ -49,10 +49,14 @@ func (a ArrayType) validateArray(data []any) Error {
 }
 
 func (a ArrayType) Schema() jsony.Object {
-	return jsony.Object{
+	res := jsony.Object{
 		jsony.Field{K: "type", V: jsony.SafeString("array")},
 		jsony.Field{K: "items", V: a.elem.Schema()},
 	}
+	for _, c := range a.cs {
+		res = append(res, c.field)
+	}
+	return res
 }
 
 func getTypeName(v any) string {

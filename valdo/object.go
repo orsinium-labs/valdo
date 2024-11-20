@@ -94,6 +94,9 @@ func (obj ObjectType) Schema() jsony.Object {
 	if !obj.extra {
 		res = append(res, jsony.Field{K: "additionalProperties", V: jsony.False})
 	}
+	for _, c := range obj.cs {
+		res = append(res, c.field)
+	}
 	return res
 }
 

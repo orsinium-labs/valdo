@@ -37,6 +37,9 @@ func Unmarshal[T any](v Validator, input []byte, target *T) error {
 }
 
 func Validate(v Validator, input []byte) Error {
+	if len(input) == 0 {
+		return ErrNoInput{}
+	}
 	var data any
 	err := json.Unmarshal(input, &data)
 	if err != nil {

@@ -55,6 +55,20 @@ func (es Errors) Unwrap() []error {
 }
 
 // An error in a field of an object.
+type ErrNoInput struct {
+	Format string
+}
+
+// Error implements [error] interface.
+func (e ErrNoInput) Error() string {
+	f := e.Format
+	if f == "" {
+		f = "the input is empty"
+	}
+	return f
+}
+
+// An error in a field of an object.
 type ErrProperty struct {
 	Format string
 	Name   string

@@ -84,7 +84,9 @@ func (obj ObjectType) Schema() jsony.Object {
 	}
 	res := jsony.Object{
 		jsony.Field{K: "type", V: jsony.SafeString("object")},
-		jsony.Field{K: "properties", V: properties},
+	}
+	if len(properties) > 0 {
+		res = append(res, jsony.Field{K: "properties", V: properties})
 	}
 	if len(required) != 0 {
 		res = append(res, jsony.Field{K: "required", V: required})

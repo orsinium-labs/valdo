@@ -279,3 +279,29 @@ func (e ErrPropertyNames) Error() string {
 	}
 	return fmt.Sprintf(f, e.Name, e.Err)
 }
+
+type ErrMinProperties struct {
+	Format string
+	Value  int
+}
+
+func (e ErrMinProperties) Error() string {
+	f := e.Format
+	if f == "" {
+		f = "must contain at least %d properties"
+	}
+	return fmt.Sprintf(f, e.Value)
+}
+
+type ErrMaxProperties struct {
+	Format string
+	Value  int
+}
+
+func (e ErrMaxProperties) Error() string {
+	f := e.Format
+	if f == "" {
+		f = "must contain at most %d properties"
+	}
+	return fmt.Sprintf(f, e.Value)
+}

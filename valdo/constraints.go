@@ -203,3 +203,31 @@ func PropertyNames(cs ...Constraint[string]) Constraint[map[string]any] {
 		field: jsony.Field{K: "propertyNames", V: schema},
 	}
 }
+
+func MinProperties(min uint) Constraint[map[string]any] {
+	minInt := int(min)
+	c := func(f map[string]any) Error {
+		if len(f) >= minInt {
+			return nil
+		}
+		return ErrMinProperties{Value: minInt}
+	}
+	return Constraint[map[string]any]{
+		check: c,
+		field: jsony.Field{K: "minProperties", V: jsony.UInt(min)},
+	}
+}
+
+func MaxProperties(min uint) Constraint[map[string]any] {
+	minInt := int(min)
+	c := func(f map[string]any) Error {
+		if len(f) <= minInt {
+			return nil
+		}
+		return ErrMaxProperties{Value: minInt}
+	}
+	return Constraint[map[string]any]{
+		check: c,
+		field: jsony.Field{K: "maxProperties", V: jsony.UInt(min)},
+	}
+}

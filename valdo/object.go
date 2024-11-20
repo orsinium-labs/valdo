@@ -25,6 +25,9 @@ func (obj ObjectType) Validate(data any) Error {
 }
 
 func (obj ObjectType) validateMap(data map[string]any) Error {
+	if data == nil {
+		return ErrType{Got: "null", Expected: "object"}
+	}
 	res := Errors{}
 	for _, p := range obj.ps {
 		val, found := data[p.name]

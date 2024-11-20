@@ -160,3 +160,17 @@ func (n nullType) Schema() jsony.Object {
 		jsony.Field{K: "type", V: jsony.SafeString("null")},
 	}
 }
+
+type anyType struct{}
+
+func Any() Validator {
+	return anyType{}
+}
+
+func (n anyType) Validate(data any) error {
+	return nil
+}
+
+func (n anyType) Schema() jsony.Object {
+	return jsony.Object{}
+}

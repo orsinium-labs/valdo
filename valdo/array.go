@@ -22,6 +22,9 @@ func (a ArrayType) Validate(data any) Error {
 }
 
 func (a ArrayType) validateArray(data []any) Error {
+	if data == nil {
+		return ErrType{Got: "null", Expected: "array"}
+	}
 	for i, val := range data {
 		err := a.elem.Validate(val)
 		if err != nil {

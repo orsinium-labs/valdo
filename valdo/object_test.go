@@ -43,6 +43,7 @@ func TestObject_Validate_Map(t *testing.T) {
 	isErr[valdo.ErrType](valdo.Validate(val, []byte(`["aragorn"]`)))
 	isErr[valdo.ErrType](valdo.Validate(val, []byte(`"aragorn"`)))
 	isErr[valdo.ErrType](valdo.Validate(val, []byte(`123`)))
+	isErr[valdo.ErrType](valdo.Validate(val, []byte(`null`)))
 	isErr[valdo.Errors](valdo.Validate(val, []byte(`{}`)))
 }
 

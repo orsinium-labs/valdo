@@ -25,7 +25,7 @@ func (p PrimitiveType[T]) Validate(raw any) Error {
 	for _, c := range p.cs {
 		res.Add(c.check(val))
 	}
-	return nil
+	return res.Flatten()
 }
 
 func (p PrimitiveType[T]) Schema() jsony.Object {

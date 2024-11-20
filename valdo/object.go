@@ -50,7 +50,15 @@ func (obj ObjectType) validateMap(data map[string]any) Error {
 			}
 			continue
 		}
-		res.Add(p.Validate(val))
+		res.Add(p.validate(val))
+		if len(p.depReq) > 0 {
+			for _, name := range p.depReq {
+				_, found := data[name]
+				if !found {
+					res.Add(ErrRequired{Name: name})
+				}
+			}
+		}
 	}
 	for _, c := range obj.cs {
 		res.Add(c.check(data))
@@ -100,6 +108,21 @@ func (obj ObjectType) Schema() jsony.Object {
 	if len(required) != 0 {
 		res = append(res, jsony.Field{K: "required", V: required})
 	}
+
+	depReq := make(jsony.Map)
+	for _, p := range obj.ps {
+		if len(p.depReq) > 0 {
+			val := make(jsony.Array[jsony.String], len(p.depReq))
+			for i, reqName := range p.depReq {
+				val[i] = jsony.String(reqName)
+			}
+			depReq[jsony.String(p.name)] = val
+		}
+	}
+	if len(depReq) > 0 {
+		res = append(res, jsony.Field{K: "dependentRequired", V: depReq})
+	}
+
 	if obj.extraVal != nil {
 		res = append(res, jsony.Field{K: "additionalProperties", V: obj.extraVal.Schema()})
 	} else if !obj.extra {
@@ -115,6 +138,7 @@ type PropertyType struct {
 	name      string
 	validator Validator
 	optional  bool
+	depReq    []string
 }
 
 func Property(name string, v Validator) PropertyType {
@@ -126,7 +150,13 @@ func (p PropertyType) Optional() PropertyType {
 	return p
 }
 
-func (p PropertyType) Validate(data any) Error {
+func (p PropertyType) IfPresentThenRequire(name string, names ...string) PropertyType {
+	p.depReq = append(p.depReq, name)
+	p.depReq = append(p.depReq, names...)
+	return p
+}
+
+func (p PropertyType) validate(data any) Error {
 	err := p.validator.Validate(data)
 	if err != nil {
 		return ErrProperty{Name: p.name, Err: err}

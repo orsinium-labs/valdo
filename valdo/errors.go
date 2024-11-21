@@ -11,6 +11,18 @@ type Error interface {
 	SetFormat(f string) Error
 }
 
+type ErrorWrapper interface {
+	Unwrap() error
+	Map(func(Error) Error) Error
+}
+
+var (
+	_ ErrorWrapper = ErrProperty{}
+	_ ErrorWrapper = ErrIndex{}
+	_ ErrorWrapper = ErrContains{}
+	_ ErrorWrapper = ErrPropertyNames{}
+)
+
 type pair struct {
 	name  string
 	value any
@@ -131,6 +143,11 @@ func (e ErrProperty) Unwrap() error {
 	return e.Err
 }
 
+func (e ErrProperty) Map(f func(Error) Error) Error {
+	e.Err = f(e.Err)
+	return e
+}
+
 // An error in an element of an array.
 type ErrIndex struct {
 	Format string
@@ -158,6 +175,11 @@ func (e ErrIndex) Error() string {
 
 func (e ErrIndex) Unwrap() error {
 	return e.Err
+}
+
+func (e ErrIndex) Map(f func(Error) Error) Error {
+	e.Err = f(e.Err)
+	return e
 }
 
 // An error indicating a value of an unexpected type.
@@ -444,7 +466,7 @@ func (e ErrPattern) Error() string {
 
 type ErrContains struct {
 	Format string
-	Err    error
+	Err    Error
 }
 
 func (e ErrContains) GetDefault() Error {
@@ -467,6 +489,11 @@ func (e ErrContains) Error() string {
 
 func (e ErrContains) Unwrap() error {
 	return e.Err
+}
+
+func (e ErrContains) Map(f func(Error) Error) Error {
+	e.Err = f(e.Err)
+	return e
 }
 
 type ErrMinItems struct {
@@ -518,7 +545,7 @@ func (e ErrMaxItems) Error() string {
 type ErrPropertyNames struct {
 	Format string
 	Name   string
-	Err    error
+	Err    Error
 }
 
 func (e ErrPropertyNames) GetDefault() Error {
@@ -541,6 +568,11 @@ func (e ErrPropertyNames) Error() string {
 
 func (e ErrPropertyNames) Unwrap() error {
 	return e.Err
+}
+
+func (e ErrPropertyNames) Map(f func(Error) Error) Error {
+	e.Err = f(e.Err)
+	return e
 }
 
 type ErrMinProperties struct {

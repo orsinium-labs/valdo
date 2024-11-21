@@ -37,6 +37,16 @@ func (lv locVal) Validate(data any) Error {
 
 // translate the given error message.
 func (lv locVal) translate(err Error) Error {
+
+	switch e := err.(type) {
+	case Errors:
+		for i, sub := range e.Errs {
+			e.Errs[i] = lv.translate(sub)
+		}
+	case ErrorWrapper:
+		err = e.Map(lv.translate)
+	}
+
 	format, found := lv.loc[err.GetDefault()]
 	if !found {
 		return err

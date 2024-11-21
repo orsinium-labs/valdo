@@ -39,3 +39,20 @@ func TestTranslate(t *testing.T) {
 	}
 
 }
+
+func TestTranslate_Recursive(t *testing.T) {
+	t.Parallel()
+	locales := valdo.Locales{
+		"ru-RU": valdo.Locale{
+			valdo.ErrProperty{}: "в поле {name}: {error}",
+			valdo.ErrType{}:     "значение должно иметь тип {expected}",
+		},
+	}
+	origV := valdo.Object(
+		valdo.P("items", valdo.A(valdo.Int())),
+	)
+	val := locales.Wrap("ru-RU", origV)
+	noErr(valdo.Validate(val, []byte(`{"items": [1, 2, 3]}`)))
+	exp := "в поле items: at 1: значение должно иметь тип integer"
+	isEq(valdo.Validate(val, []byte(`{"items": [1, "hi", 3]}`)).Error(), exp)
+}

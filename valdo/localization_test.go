@@ -10,7 +10,7 @@ func TestTranslate(t *testing.T) {
 	t.Parallel()
 	locales := valdo.Locales{
 		"ru-RU": valdo.Locale{
-			valdo.ErrMin{}: "значение должно быть не меньше %d",
+			valdo.ErrMin{}: "значение должно быть не меньше {value}",
 		},
 	}
 	origV := valdo.Int(valdo.Min(2), valdo.Max(8))

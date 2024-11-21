@@ -11,6 +11,20 @@ type Error interface {
 	SetFormat(f string) Error
 }
 
+type pair struct {
+	name  string
+	value any
+}
+
+func format(f string, pairs ...pair) string {
+	args := make([]string, 0, len(pairs)*2)
+	for _, p := range pairs {
+		args = append(args, "{"+p.name+"}")
+		args = append(args, fmt.Sprintf("%v", p.value))
+	}
+	return strings.NewReplacer(args...).Replace(f)
+}
+
 // A collection of multiple errors.
 type Errors struct {
 	Sep  string
@@ -108,9 +122,9 @@ func (e ErrProperty) SetFormat(f string) Error {
 func (e ErrProperty) Error() string {
 	f := e.Format
 	if f == "" {
-		f = "%s: %v"
+		f = "{name}: {error}"
 	}
-	return fmt.Sprintf(f, e.Name, e.Err)
+	return format(f, pair{"name", e.Name}, pair{"error", e.Err})
 }
 
 func (e ErrProperty) Unwrap() error {
@@ -137,9 +151,9 @@ func (e ErrIndex) SetFormat(f string) Error {
 func (e ErrIndex) Error() string {
 	f := e.Format
 	if f == "" {
-		f = "at %d: %v"
+		f = "at {index}: {error}"
 	}
-	return fmt.Sprintf(f, e.Index, e.Err)
+	return format(f, pair{"index", e.Index}, pair{"error", e.Err})
 }
 
 func (e ErrIndex) Unwrap() error {
@@ -166,13 +180,13 @@ func (e ErrType) SetFormat(f string) Error {
 func (e ErrType) Error() string {
 	f := e.Format
 	if f == "" {
-		f = "invalid type: got %s, expected %s"
+		f = "invalid type: got {got}, expected {expected}"
 	}
 	got := e.Got
 	if got == "" {
 		got = "unknown type"
 	}
-	return fmt.Sprintf(f, got, e.Expected)
+	return format(f, pair{"got", got}, pair{"expected", e.Expected})
 }
 
 // An error indicating that a value is required but not found.
@@ -194,9 +208,9 @@ func (e ErrRequired) SetFormat(f string) Error {
 func (e ErrRequired) Error() string {
 	f := e.Format
 	if f == "" {
-		f = "%s is required but not found"
+		f = "{name} is required but not found"
 	}
-	return fmt.Sprintf(f, e.Name)
+	return format(f, pair{"name", e.Name})
 }
 
 // An error indicating that the property is not allowed.
@@ -218,9 +232,9 @@ func (e ErrUnexpected) SetFormat(f string) Error {
 func (e ErrUnexpected) Error() string {
 	f := e.Format
 	if f == "" {
-		f = "unexpected property: %s"
+		f = "unexpected property: {name}"
 	}
-	return fmt.Sprintf(f, e.Name)
+	return format(f, pair{"name", e.Name})
 }
 
 type ErrMultipleOf struct {
@@ -241,9 +255,9 @@ func (e ErrMultipleOf) SetFormat(f string) Error {
 func (e ErrMultipleOf) Error() string {
 	f := e.Format
 	if f == "" {
-		f = "must be a multiple of %v"
+		f = "must be a multiple of {value}"
 	}
-	return fmt.Sprintf(f, e.Value)
+	return format(f, pair{"value", e.Value})
 }
 
 type ErrNot struct {
@@ -286,9 +300,9 @@ func (e ErrMin) SetFormat(f string) Error {
 func (e ErrMin) Error() string {
 	f := e.Format
 	if f == "" {
-		f = "must be greater than or equal to %v"
+		f = "must be greater than or equal to {value}"
 	}
-	return fmt.Sprintf(f, e.Value)
+	return format(f, pair{"value", e.Value})
 }
 
 type ErrExclMin struct {
@@ -309,9 +323,9 @@ func (e ErrExclMin) SetFormat(f string) Error {
 func (e ErrExclMin) Error() string {
 	f := e.Format
 	if f == "" {
-		f = "must be greater than %v"
+		f = "must be greater than {value}"
 	}
-	return fmt.Sprintf(f, e.Value)
+	return format(f, pair{"value", e.Value})
 }
 
 type ErrMax struct {
@@ -332,9 +346,9 @@ func (e ErrMax) SetFormat(f string) Error {
 func (e ErrMax) Error() string {
 	f := e.Format
 	if f == "" {
-		f = "must be less than or equal to %v"
+		f = "must be less than or equal to {value}"
 	}
-	return fmt.Sprintf(f, e.Value)
+	return format(f, pair{"value", e.Value})
 }
 
 type ErrExclMax struct {
@@ -355,9 +369,9 @@ func (e ErrExclMax) SetFormat(f string) Error {
 func (e ErrExclMax) Error() string {
 	f := e.Format
 	if f == "" {
-		f = "must be less than %v"
+		f = "must be less than {value}"
 	}
-	return fmt.Sprintf(f, e.Value)
+	return format(f, pair{"value", e.Value})
 }
 
 type ErrMinLen struct {
@@ -378,9 +392,9 @@ func (e ErrMinLen) SetFormat(f string) Error {
 func (e ErrMinLen) Error() string {
 	f := e.Format
 	if f == "" {
-		f = "must be at least %d characters long"
+		f = "must be at least {value} characters long"
 	}
-	return fmt.Sprintf(f, e.Value)
+	return format(f, pair{"value", e.Value})
 }
 
 type ErrMaxLen struct {
@@ -401,9 +415,9 @@ func (e ErrMaxLen) SetFormat(f string) Error {
 func (e ErrMaxLen) Error() string {
 	f := e.Format
 	if f == "" {
-		f = "must be at most %d characters long"
+		f = "must be at most {value} characters long"
 	}
-	return fmt.Sprintf(f, e.Value)
+	return format(f, pair{"value", e.Value})
 }
 
 type ErrPattern struct {
@@ -446,9 +460,9 @@ func (e ErrContains) SetFormat(f string) Error {
 func (e ErrContains) Error() string {
 	f := e.Format
 	if f == "" {
-		f = "at least one item %v"
+		f = "at least one item {error}"
 	}
-	return fmt.Sprintf(f, e.Err)
+	return format(f, pair{"error", e.Err})
 }
 
 func (e ErrContains) Unwrap() error {
@@ -473,9 +487,9 @@ func (e ErrMinItems) SetFormat(f string) Error {
 func (e ErrMinItems) Error() string {
 	f := e.Format
 	if f == "" {
-		f = "must contain at least %d items"
+		f = "must contain at least {value} items"
 	}
-	return fmt.Sprintf(f, e.Value)
+	return format(f, pair{"value", e.Value})
 }
 
 type ErrMaxItems struct {
@@ -496,9 +510,9 @@ func (e ErrMaxItems) SetFormat(f string) Error {
 func (e ErrMaxItems) Error() string {
 	f := e.Format
 	if f == "" {
-		f = "must contain at most %d items"
+		f = "must contain at most {value} items"
 	}
-	return fmt.Sprintf(f, e.Value)
+	return format(f, pair{"value", e.Value})
 }
 
 type ErrPropertyNames struct {
@@ -520,9 +534,9 @@ func (e ErrPropertyNames) SetFormat(f string) Error {
 func (e ErrPropertyNames) Error() string {
 	f := e.Format
 	if f == "" {
-		f = "property name %s %v"
+		f = "property name {name} {error}"
 	}
-	return fmt.Sprintf(f, e.Name, e.Err)
+	return format(f, pair{"name", e.Name}, pair{"error", e.Err})
 }
 
 func (e ErrPropertyNames) Unwrap() error {
@@ -547,9 +561,9 @@ func (e ErrMinProperties) SetFormat(f string) Error {
 func (e ErrMinProperties) Error() string {
 	f := e.Format
 	if f == "" {
-		f = "must contain at least %d properties"
+		f = "must contain at least {value} properties"
 	}
-	return fmt.Sprintf(f, e.Value)
+	return format(f, pair{"value", e.Value})
 }
 
 type ErrMaxProperties struct {
@@ -570,7 +584,7 @@ func (e ErrMaxProperties) SetFormat(f string) Error {
 func (e ErrMaxProperties) Error() string {
 	f := e.Format
 	if f == "" {
-		f = "must contain at most %d properties"
+		f = "must contain at most {value} properties"
 	}
-	return fmt.Sprintf(f, e.Value)
+	return format(f, pair{"value", e.Value})
 }

@@ -1,6 +1,8 @@
 package valdo
 
 import (
+	"regexp"
+
 	"github.com/orsinium-labs/jsony"
 )
 
@@ -59,7 +61,19 @@ func (obj ObjectType) validateMap(data map[string]any) Error {
 		return ErrType{Got: "null", Expected: "object"}
 	}
 	res := Errors{}
+	handledNames := map[string]struct{}{}
 	for _, p := range obj.ps {
+		if p.rex != nil {
+			for name, val := range data {
+				if !p.rex.MatchString(name) {
+					continue
+				}
+				handledNames[name] = struct{}{}
+				res.Add(p.validate(val))
+			}
+			continue
+		}
+
 		val, found := data[p.name]
 		if !found {
 			if !p.optional {
@@ -67,6 +81,7 @@ func (obj ObjectType) validateMap(data map[string]any) Error {
 			}
 			continue
 		}
+		handledNames[p.name] = struct{}{}
 		res.Add(p.validate(val))
 		if len(p.depReq) > 0 {
 			for _, name := range p.depReq {
@@ -82,15 +97,16 @@ func (obj ObjectType) validateMap(data map[string]any) Error {
 	}
 	if obj.extraVal != nil {
 		for name, val := range data {
-			if !obj.hasProperty(name) {
+			_, handled := handledNames[name]
+			if !handled {
 				err := obj.extraVal.Validate(val)
 				res.Add(ErrProperty{Name: name, Err: err})
 			}
 		}
-	}
-	if !obj.extra {
+	} else if !obj.extra {
 		for name := range data {
-			if !obj.hasProperty(name) {
+			_, handled := handledNames[name]
+			if !handled {
 				res.Add(ErrUnexpected{Name: name})
 			}
 		}
@@ -98,26 +114,23 @@ func (obj ObjectType) validateMap(data map[string]any) Error {
 	return res.Flatten()
 }
 
-func (obj ObjectType) hasProperty(name string) bool {
-	for _, p := range obj.ps {
-		if p.name == name {
-			return true
-		}
-	}
-	return false
-}
-
 // Schema implements [Validator].
 func (obj ObjectType) Schema() jsony.Object {
 	required := make(jsony.Array[jsony.String], 0)
 	properties := make(jsony.Map, 0)
+	patternProps := make(jsony.Map, 0)
 	for _, p := range obj.ps {
+		name := jsony.String(p.name)
 		if !p.optional {
-			required = append(required, jsony.String(p.name))
+			required = append(required, name)
 		}
 		pSchema := p.validator.Schema()
 		if len(pSchema) > 0 {
-			properties[jsony.String(p.name)] = pSchema
+			if p.rex != nil {
+				patternProps[name] = pSchema
+			} else {
+				properties[name] = pSchema
+			}
 		}
 	}
 	res := jsony.Object{
@@ -125,6 +138,9 @@ func (obj ObjectType) Schema() jsony.Object {
 	}
 	if len(properties) > 0 {
 		res = append(res, jsony.Field{K: "properties", V: properties})
+	}
+	if len(patternProps) > 0 {
+		res = append(res, jsony.Field{K: "patternProperties", V: patternProps})
 	}
 	if len(required) != 0 {
 		res = append(res, jsony.Field{K: "required", V: required})
@@ -158,6 +174,7 @@ func (obj ObjectType) Schema() jsony.Object {
 // PropertyType is constructed by [Property].
 type PropertyType struct {
 	name      string
+	rex       *regexp.Regexp
 	validator Validator
 	optional  bool
 	depReq    []string
@@ -165,7 +182,11 @@ type PropertyType struct {
 
 // Property is a key-value pair of an [Object].
 func Property(name string, v Validator) PropertyType {
-	return PropertyType{name: name, validator: v}
+	var rex *regexp.Regexp
+	if name != "" && name[0] == '^' {
+		rex = regexp.MustCompile(name)
+	}
+	return PropertyType{name: name, validator: v, rex: rex}
 }
 
 // Mark the property as optional.
@@ -182,6 +203,9 @@ func (p PropertyType) Optional() PropertyType {
 //
 // https://json-schema.org/understanding-json-schema/reference/conditionals#dependentRequired
 func (p PropertyType) AlsoRequire(name string, names ...string) PropertyType {
+	if p.rex != nil {
+		panic("pattern properties cannot be required")
+	}
 	p.depReq = append(p.depReq, name)
 	p.depReq = append(p.depReq, names...)
 	return p

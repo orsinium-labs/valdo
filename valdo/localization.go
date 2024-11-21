@@ -12,7 +12,13 @@ type Locale map[Error]string
 func (ls Locales) Wrap(lang string, v Validator) Validator {
 	locale, hasLang := ls[lang]
 	if !hasLang {
-		return v
+		if len(lang) != 5 {
+			return v
+		}
+		locale, hasLang = ls[lang[:2]]
+		if !hasLang {
+			return v
+		}
 	}
 	return locale.Wrap(v)
 }

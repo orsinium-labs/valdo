@@ -4,6 +4,8 @@ A Go package for validating JSON that can generate JSON Schema.
 
 Features:
 
+* Mechanism to translate error messages.
+* Out-of-the-box translations for some languages.
 * Supports the latest JSON Schema specification (2020-12).
 * Pure Go.
 * No code generation, no reflection, no unsafe code.

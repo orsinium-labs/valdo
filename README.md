@@ -41,7 +41,7 @@ type User struct {
     Name  string `json:"name"`
     Admin bool   `json:"admin"`
 }
-err := valdo.Unmarshal[User](validator, input)
+user, err := valdo.Unmarshal[User](validator, input)
 
 // generate JSON Schema
 schema := valdo.Schema(validator)

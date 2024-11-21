@@ -6,26 +6,12 @@ type Locales map[string]Locale
 
 type Locale map[Error]string
 
-func (ls Locales) Wrap(v Validator) Localizator {
-	return Localizator{v: v, ls: ls}
-}
-
-type Localizator struct {
-	v  Validator
-	ls Locales
-}
-
-func (lz Localizator) HasLang(lang string) bool {
-	_, hasLang := lz.ls[lang]
-	return hasLang
-}
-
-func (lz Localizator) Translate(lang string) Validator {
-	locale, hasLang := lz.ls[lang]
+func (ls Locales) Wrap(lang string, v Validator) Validator {
+	locale, hasLang := ls[lang]
 	if !hasLang {
-		return lz.v
+		return v
 	}
-	return locVal{v: lz.v, loc: locale}
+	return locVal{v: v, loc: locale}
 }
 
 type locVal struct {

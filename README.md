@@ -1,5 +1,7 @@
 # valdo
 
+[ [📚 docs](https://pkg.go.dev/github.com/orsinium-labs/valdo/valdo) ] [ [🐙 github](https://github.com/orsinium-labs/valdo) ]
+
 A Go package for validating JSON that can generate JSON Schema.
 
 Features:
@@ -42,3 +44,5 @@ err := valdo.Unmarshal[User](validator, input)
 // generate JSON Schema
 schema := valdo.Schema(validator)
 ```
+
+See [documentation](https://pkg.go.dev/github.com/orsinium-labs/valdo/valdo) for more.

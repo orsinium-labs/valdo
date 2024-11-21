@@ -7,6 +7,8 @@ import (
 
 type Error interface {
 	error
+	GetDefault() Error
+	SetFormat(f string) Error
 }
 
 // A collection of multiple errors.
@@ -29,6 +31,15 @@ func (es Errors) Flatten() Error {
 	if len(es.Errs) == 1 {
 		return es.Errs[0]
 	}
+	return es
+}
+
+func (es Errors) GetDefault() Error {
+	return Errors{}
+}
+
+func (es Errors) SetFormat(f string) Error {
+	es.Sep = f
 	return es
 }
 
@@ -59,6 +70,15 @@ type ErrNoInput struct {
 	Format string
 }
 
+func (e ErrNoInput) GetDefault() Error {
+	return ErrNoInput{}
+}
+
+func (e ErrNoInput) SetFormat(f string) Error {
+	e.Format = f
+	return e
+}
+
 // Error implements [error] interface.
 func (e ErrNoInput) Error() string {
 	f := e.Format
@@ -73,6 +93,15 @@ type ErrProperty struct {
 	Format string
 	Name   string
 	Err    Error
+}
+
+func (e ErrProperty) GetDefault() Error {
+	return ErrProperty{}
+}
+
+func (e ErrProperty) SetFormat(f string) Error {
+	e.Format = f
+	return e
 }
 
 // Error implements [error] interface.
@@ -95,6 +124,15 @@ type ErrIndex struct {
 	Err    Error
 }
 
+func (e ErrIndex) GetDefault() Error {
+	return ErrIndex{}
+}
+
+func (e ErrIndex) SetFormat(f string) Error {
+	e.Format = f
+	return e
+}
+
 // Error implements [error] interface.
 func (e ErrIndex) Error() string {
 	f := e.Format
@@ -113,6 +151,15 @@ type ErrType struct {
 	Format   string
 	Got      string
 	Expected string
+}
+
+func (e ErrType) GetDefault() Error {
+	return ErrType{}
+}
+
+func (e ErrType) SetFormat(f string) Error {
+	e.Format = f
+	return e
 }
 
 // Error implements [error] interface.
@@ -134,6 +181,15 @@ type ErrRequired struct {
 	Name   string
 }
 
+func (e ErrRequired) GetDefault() Error {
+	return ErrRequired{}
+}
+
+func (e ErrRequired) SetFormat(f string) Error {
+	e.Format = f
+	return e
+}
+
 // Error implements [error] interface.
 func (e ErrRequired) Error() string {
 	f := e.Format
@@ -147,6 +203,15 @@ func (e ErrRequired) Error() string {
 type ErrUnexpected struct {
 	Format string
 	Name   string
+}
+
+func (e ErrUnexpected) GetDefault() Error {
+	return ErrUnexpected{}
+}
+
+func (e ErrUnexpected) SetFormat(f string) Error {
+	e.Format = f
+	return e
 }
 
 // Error implements [error] interface.
@@ -163,6 +228,15 @@ type ErrMultipleOf struct {
 	Value  any
 }
 
+func (e ErrMultipleOf) GetDefault() Error {
+	return ErrMultipleOf{}
+}
+
+func (e ErrMultipleOf) SetFormat(f string) Error {
+	e.Format = f
+	return e
+}
+
 // Error implements [error] interface.
 func (e ErrMultipleOf) Error() string {
 	f := e.Format
@@ -174,6 +248,15 @@ func (e ErrMultipleOf) Error() string {
 
 type ErrNot struct {
 	Format string
+}
+
+func (e ErrNot) GetDefault() Error {
+	return ErrNot{}
+}
+
+func (e ErrNot) SetFormat(f string) Error {
+	e.Format = f
+	return e
 }
 
 // Error implements [error] interface.
@@ -190,6 +273,15 @@ type ErrMin struct {
 	Value  any
 }
 
+func (e ErrMin) GetDefault() Error {
+	return ErrMin{}
+}
+
+func (e ErrMin) SetFormat(f string) Error {
+	e.Format = f
+	return e
+}
+
 // Error implements [error] interface.
 func (e ErrMin) Error() string {
 	f := e.Format
@@ -202,6 +294,15 @@ func (e ErrMin) Error() string {
 type ErrExclMin struct {
 	Format string
 	Value  any
+}
+
+func (e ErrExclMin) GetDefault() Error {
+	return ErrExclMin{}
+}
+
+func (e ErrExclMin) SetFormat(f string) Error {
+	e.Format = f
+	return e
 }
 
 // Error implements [error] interface.
@@ -218,6 +319,15 @@ type ErrMax struct {
 	Value  any
 }
 
+func (e ErrMax) GetDefault() Error {
+	return ErrMax{}
+}
+
+func (e ErrMax) SetFormat(f string) Error {
+	e.Format = f
+	return e
+}
+
 // Error implements [error] interface.
 func (e ErrMax) Error() string {
 	f := e.Format
@@ -230,6 +340,15 @@ func (e ErrMax) Error() string {
 type ErrExclMax struct {
 	Format string
 	Value  any
+}
+
+func (e ErrExclMax) GetDefault() Error {
+	return ErrExclMax{}
+}
+
+func (e ErrExclMax) SetFormat(f string) Error {
+	e.Format = f
+	return e
 }
 
 // Error implements [error] interface.
@@ -246,6 +365,15 @@ type ErrMinLen struct {
 	Value  int
 }
 
+func (e ErrMinLen) GetDefault() Error {
+	return ErrMinLen{}
+}
+
+func (e ErrMinLen) SetFormat(f string) Error {
+	e.Format = f
+	return e
+}
+
 // Error implements [error] interface.
 func (e ErrMinLen) Error() string {
 	f := e.Format
@@ -258,6 +386,15 @@ func (e ErrMinLen) Error() string {
 type ErrMaxLen struct {
 	Format string
 	Value  int
+}
+
+func (e ErrMaxLen) GetDefault() Error {
+	return ErrMaxLen{}
+}
+
+func (e ErrMaxLen) SetFormat(f string) Error {
+	e.Format = f
+	return e
 }
 
 // Error implements [error] interface.
@@ -273,6 +410,15 @@ type ErrPattern struct {
 	Format string
 }
 
+func (e ErrPattern) GetDefault() Error {
+	return ErrPattern{}
+}
+
+func (e ErrPattern) SetFormat(f string) Error {
+	e.Format = f
+	return e
+}
+
 // Error implements [error] interface.
 func (e ErrPattern) Error() string {
 	f := e.Format
@@ -285,6 +431,15 @@ func (e ErrPattern) Error() string {
 type ErrContains struct {
 	Format string
 	Err    error
+}
+
+func (e ErrContains) GetDefault() Error {
+	return ErrContains{}
+}
+
+func (e ErrContains) SetFormat(f string) Error {
+	e.Format = f
+	return e
 }
 
 // Error implements [error] interface.
@@ -305,6 +460,15 @@ type ErrMinItems struct {
 	Value  int
 }
 
+func (e ErrMinItems) GetDefault() Error {
+	return ErrMinItems{}
+}
+
+func (e ErrMinItems) SetFormat(f string) Error {
+	e.Format = f
+	return e
+}
+
 // Error implements [error] interface.
 func (e ErrMinItems) Error() string {
 	f := e.Format
@@ -317,6 +481,15 @@ func (e ErrMinItems) Error() string {
 type ErrMaxItems struct {
 	Format string
 	Value  int
+}
+
+func (e ErrMaxItems) GetDefault() Error {
+	return ErrMaxItems{}
+}
+
+func (e ErrMaxItems) SetFormat(f string) Error {
+	e.Format = f
+	return e
 }
 
 // Error implements [error] interface.
@@ -332,6 +505,15 @@ type ErrPropertyNames struct {
 	Format string
 	Name   string
 	Err    error
+}
+
+func (e ErrPropertyNames) GetDefault() Error {
+	return ErrPropertyNames{}
+}
+
+func (e ErrPropertyNames) SetFormat(f string) Error {
+	e.Format = f
+	return e
 }
 
 // Error implements [error] interface.
@@ -352,6 +534,15 @@ type ErrMinProperties struct {
 	Value  int
 }
 
+func (e ErrMinProperties) GetDefault() Error {
+	return ErrMinProperties{}
+}
+
+func (e ErrMinProperties) SetFormat(f string) Error {
+	e.Format = f
+	return e
+}
+
 // Error implements [error] interface.
 func (e ErrMinProperties) Error() string {
 	f := e.Format
@@ -364,6 +555,15 @@ func (e ErrMinProperties) Error() string {
 type ErrMaxProperties struct {
 	Format string
 	Value  int
+}
+
+func (e ErrMaxProperties) GetDefault() Error {
+	return ErrMaxProperties{}
+}
+
+func (e ErrMaxProperties) SetFormat(f string) Error {
+	e.Format = f
+	return e
 }
 
 // Error implements [error] interface.

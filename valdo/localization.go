@@ -42,7 +42,11 @@ func (lv locVal) Validate(data any) Error {
 }
 
 func (lv locVal) translate(err Error) Error {
-	panic("todo")
+	format, found := lv.loc[err.GetDefault()]
+	if !found {
+		return err
+	}
+	return err.SetFormat(format)
 }
 
 func (lv locVal) Schema() jsony.Object {

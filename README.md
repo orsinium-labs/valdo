@@ -2,7 +2,9 @@
 
 [ [📚 docs](https://pkg.go.dev/github.com/orsinium-labs/valdo/valdo) ] [ [🐙 github](https://github.com/orsinium-labs/valdo) ]
 
-A Go package for validating JSON that can generate JSON Schema.
+Go package for validating JSON. Can generate [JSON Schema](https://json-schema.org/overview/what-is-jsonschema) (100% compatible with [OpenAPI](https://swagger.io/specification/)), produces user-friendly errors, supports translations.
+
+You could write OpenAPI documentation by hand (which is very painfull) and then use it to validate user input in your HTTP service, but then error messages are very confusing, not user-friendly, and only in English. Or you could write input validaion by hand and then maintain the OpenAPI documentation separately but then the two will eventually drift and your documentaiton will be a lie. Valdo solves all these problems: write validation once using a real programming language, use it everywhere.
 
 Features:
 

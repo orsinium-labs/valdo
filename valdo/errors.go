@@ -7,7 +7,9 @@ import (
 
 type Error interface {
 	error
+	// GetDefault implements [Error] interface.
 	GetDefault() Error
+	// SetFormat implements [Error] interface.
 	SetFormat(f string) Error
 }
 
@@ -60,10 +62,12 @@ func (es Errors) Flatten() Error {
 	return es
 }
 
+// GetDefault implements [Error] interface.
 func (es Errors) GetDefault() Error {
 	return Errors{}
 }
 
+// SetFormat implements [Error] interface.
 func (es Errors) SetFormat(f string) Error {
 	es.Sep = f
 	return es
@@ -96,10 +100,12 @@ type ErrNoInput struct {
 	Format string
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrNoInput) GetDefault() Error {
 	return ErrNoInput{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrNoInput) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -121,10 +127,12 @@ type ErrProperty struct {
 	Err    Error
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrProperty) GetDefault() Error {
 	return ErrProperty{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrProperty) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -155,10 +163,12 @@ type ErrIndex struct {
 	Err    Error
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrIndex) GetDefault() Error {
 	return ErrIndex{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrIndex) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -189,10 +199,12 @@ type ErrType struct {
 	Expected string
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrType) GetDefault() Error {
 	return ErrType{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrType) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -217,10 +229,12 @@ type ErrRequired struct {
 	Name   string
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrRequired) GetDefault() Error {
 	return ErrRequired{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrRequired) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -241,10 +255,12 @@ type ErrUnexpected struct {
 	Name   string
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrUnexpected) GetDefault() Error {
 	return ErrUnexpected{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrUnexpected) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -264,10 +280,12 @@ type ErrMultipleOf struct {
 	Value  any
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrMultipleOf) GetDefault() Error {
 	return ErrMultipleOf{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrMultipleOf) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -286,10 +304,12 @@ type ErrNot struct {
 	Format string
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrNot) GetDefault() Error {
 	return ErrNot{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrNot) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -309,10 +329,12 @@ type ErrMin struct {
 	Value  any
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrMin) GetDefault() Error {
 	return ErrMin{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrMin) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -332,10 +354,12 @@ type ErrExclMin struct {
 	Value  any
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrExclMin) GetDefault() Error {
 	return ErrExclMin{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrExclMin) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -355,10 +379,12 @@ type ErrMax struct {
 	Value  any
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrMax) GetDefault() Error {
 	return ErrMax{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrMax) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -378,10 +404,12 @@ type ErrExclMax struct {
 	Value  any
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrExclMax) GetDefault() Error {
 	return ErrExclMax{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrExclMax) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -401,10 +429,12 @@ type ErrMinLen struct {
 	Value  int
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrMinLen) GetDefault() Error {
 	return ErrMinLen{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrMinLen) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -424,10 +454,12 @@ type ErrMaxLen struct {
 	Value  int
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrMaxLen) GetDefault() Error {
 	return ErrMaxLen{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrMaxLen) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -446,10 +478,12 @@ type ErrPattern struct {
 	Format string
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrPattern) GetDefault() Error {
 	return ErrPattern{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrPattern) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -469,10 +503,12 @@ type ErrContains struct {
 	Err    Error
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrContains) GetDefault() Error {
 	return ErrContains{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrContains) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -501,10 +537,12 @@ type ErrMinItems struct {
 	Value  int
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrMinItems) GetDefault() Error {
 	return ErrMinItems{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrMinItems) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -524,10 +562,12 @@ type ErrMaxItems struct {
 	Value  int
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrMaxItems) GetDefault() Error {
 	return ErrMaxItems{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrMaxItems) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -548,10 +588,12 @@ type ErrPropertyNames struct {
 	Err    Error
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrPropertyNames) GetDefault() Error {
 	return ErrPropertyNames{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrPropertyNames) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -580,10 +622,12 @@ type ErrMinProperties struct {
 	Value  int
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrMinProperties) GetDefault() Error {
 	return ErrMinProperties{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrMinProperties) SetFormat(f string) Error {
 	e.Format = f
 	return e
@@ -603,10 +647,12 @@ type ErrMaxProperties struct {
 	Value  int
 }
 
+// GetDefault implements [Error] interface.
 func (e ErrMaxProperties) GetDefault() Error {
 	return ErrMaxProperties{}
 }
 
+// SetFormat implements [Error] interface.
 func (e ErrMaxProperties) SetFormat(f string) Error {
 	e.Format = f
 	return e

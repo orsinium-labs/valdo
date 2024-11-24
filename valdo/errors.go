@@ -147,10 +147,12 @@ func (e ErrProperty) Error() string {
 	return format(f, pair{"name", e.Name}, pair{"error", e.Err})
 }
 
+// Unwrap implements [ErrorWrapper] interface.
 func (e ErrProperty) Unwrap() error {
 	return e.Err
 }
 
+// Map implements [ErrorWrapper] interface.
 func (e ErrProperty) Map(f func(Error) Error) Error {
 	e.Err = f(e.Err)
 	return e
@@ -183,10 +185,12 @@ func (e ErrIndex) Error() string {
 	return format(f, pair{"index", e.Index}, pair{"error", e.Err})
 }
 
+// Unwrap implements [ErrorWrapper] interface.
 func (e ErrIndex) Unwrap() error {
 	return e.Err
 }
 
+// Map implements [ErrorWrapper] interface.
 func (e ErrIndex) Map(f func(Error) Error) Error {
 	e.Err = f(e.Err)
 	return e
@@ -327,6 +331,21 @@ func (e ErrNot) Error() string {
 type ErrAnyOf struct {
 	Format string
 	Errors Errors
+}
+
+// Map implements [ErrorWrapper] interface.
+func (e ErrAnyOf) Map(f func(Error) Error) Error {
+	errors := make([]Error, len(e.Errors.Errs))
+	for i, sub := range e.Errors.Errs {
+		errors[i] = f(sub)
+	}
+	e.Errors = Errors{Errs: errors}
+	return e
+}
+
+// Unwrap implements [ErrorWrapper] interface.
+func (e ErrAnyOf) Unwrap() error {
+	return e.Errors
 }
 
 // GetDefault implements [Error] interface.
@@ -548,10 +567,12 @@ func (e ErrContains) Error() string {
 	return format(f, pair{"error", e.Err})
 }
 
+// Unwrap implements [ErrorWrapper] interface.
 func (e ErrContains) Unwrap() error {
 	return e.Err
 }
 
+// Map implements [ErrorWrapper] interface.
 func (e ErrContains) Map(f func(Error) Error) Error {
 	e.Err = f(e.Err)
 	return e
@@ -633,10 +654,12 @@ func (e ErrPropertyNames) Error() string {
 	return format(f, pair{"name", e.Name}, pair{"error", e.Err})
 }
 
+// Unwrap implements [ErrorWrapper] interface.
 func (e ErrPropertyNames) Unwrap() error {
 	return e.Err
 }
 
+// Map implements [ErrorWrapper] interface.
 func (e ErrPropertyNames) Map(f func(Error) Error) Error {
 	e.Err = f(e.Err)
 	return e

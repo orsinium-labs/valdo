@@ -324,6 +324,31 @@ func (e ErrNot) Error() string {
 	return f
 }
 
+type ErrAnyOf struct {
+	Format string
+	Errors Errors
+}
+
+// GetDefault implements [Error] interface.
+func (e ErrAnyOf) GetDefault() Error {
+	return ErrAnyOf{}
+}
+
+// SetFormat implements [Error] interface.
+func (e ErrAnyOf) SetFormat(f string) Error {
+	e.Format = f
+	return e
+}
+
+// Error implements [error] interface.
+func (e ErrAnyOf) Error() string {
+	f := e.Format
+	if f == "" {
+		f = "must match any of the conditions: {errors}"
+	}
+	return format(f, pair{"errors", e.Errors})
+}
+
 type ErrMin struct {
 	Format string
 	Value  any

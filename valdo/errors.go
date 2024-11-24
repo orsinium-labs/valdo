@@ -13,8 +13,15 @@ type Error interface {
 	SetFormat(f string) Error
 }
 
+// ErrorWrapper is an [Error] that wraps another error.
 type ErrorWrapper interface {
+	Error
+	// Unwrap makes it possible for errors.Unwrap function to access the wrapped error.
 	Unwrap() error
+
+	// Map applies the given function to the inner function and returns it, wrapped.
+	//
+	// Yes, it's a monad! In Go! What a day.
 	Map(func(Error) Error) Error
 }
 
@@ -23,6 +30,7 @@ var (
 	_ ErrorWrapper = ErrIndex{}
 	_ ErrorWrapper = ErrContains{}
 	_ ErrorWrapper = ErrPropertyNames{}
+	_ ErrorWrapper = ErrAnyOf{}
 )
 
 type pair struct {
@@ -30,6 +38,7 @@ type pair struct {
 	value any
 }
 
+// Format substitutes values into a format string with python-style placeholders.
 func format(f string, pairs ...pair) string {
 	args := make([]string, 0, len(pairs)*2)
 	for _, p := range pairs {
@@ -86,7 +95,23 @@ func (es Errors) Error() string {
 	return strings.Join(res, sep)
 }
 
+// Map applies the given function to the inner function and returns it, wrapped.
+//
+// It partially implements [ErrorWrapper]: Errors doesn't satisfy the interface
+// because [Errors.Unwrap] returns a list of errrors instead of a single error.
+func (e Errors) Map(f func(Error) Error) Error {
+	errors := make([]Error, len(e.Errs))
+	for i, sub := range e.Errs {
+		errors[i] = f(sub)
+	}
+	e.Errs = errors
+	return e
+}
+
 // Unwrap makes errors.Is work.
+//
+// Note that since it returns a list of errors instead of a single error,
+// errors.Unwrap will NOT work.
 func (es Errors) Unwrap() []error {
 	res := make([]error, len(es.Errs))
 	for i, subErr := range es.Errs {

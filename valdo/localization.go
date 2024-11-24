@@ -46,9 +46,7 @@ func (lv locVal) translate(err Error) Error {
 
 	switch e := err.(type) {
 	case Errors:
-		for i, sub := range e.Errs {
-			e.Errs[i] = lv.translate(sub)
-		}
+		err = e.Map(lv.translate)
 	case ErrorWrapper:
 		err = e.Map(lv.translate)
 	}

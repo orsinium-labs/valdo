@@ -168,7 +168,7 @@ func (n nullType) Validate(data any) Error {
 			return nil
 		}
 	}
-	return ErrType{Got: getTypeName(data)}
+	return ErrType{Got: getTypeName(data), Expected: "null"}
 }
 
 // Schema implements [Validator].

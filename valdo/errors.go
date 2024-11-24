@@ -366,13 +366,14 @@ func (e ErrNot) Error() string {
 // An error returned by [AnyOf] validator.
 type ErrAnyOf struct {
 	Format string
-	Errors Errors
+	Errors Error
 }
 
 // Map implements [ErrorWrapper] interface.
 func (e ErrAnyOf) Map(f func(Error) Error) Error {
-	errors := make([]Error, len(e.Errors.Errs))
-	for i, sub := range e.Errors.Errs {
+	oldErrors := e.Errors.(Errors).Errs
+	errors := make([]Error, len(oldErrors))
+	for i, sub := range oldErrors {
 		errors[i] = f(sub)
 	}
 	e.Errors = Errors{Errs: errors}

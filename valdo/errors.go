@@ -146,6 +146,8 @@ func (e ErrNoInput) Error() string {
 }
 
 // An error in a field of an object.
+//
+// Returned by an [Object] validator.
 type ErrProperty struct {
 	Format string
 	Name   string
@@ -184,6 +186,8 @@ func (e ErrProperty) Map(f func(Error) Error) Error {
 }
 
 // An error in an element of an array.
+//
+// Returned by an [Array] validator.
 type ErrIndex struct {
 	Format string
 	Index  int
@@ -253,6 +257,8 @@ func (e ErrType) Error() string {
 }
 
 // An error indicating that a value is required but not found.
+//
+// Returned by an [Object] validator.
 type ErrRequired struct {
 	Format string
 	Name   string
@@ -279,6 +285,8 @@ func (e ErrRequired) Error() string {
 }
 
 // An error indicating that the property is not allowed.
+//
+// Returned by an [Object] validator.
 type ErrUnexpected struct {
 	Format string
 	Name   string
@@ -304,6 +312,7 @@ func (e ErrUnexpected) Error() string {
 	return format(f, pair{"name", e.Name})
 }
 
+// A constraint error returned by [MultipleOf].
 type ErrMultipleOf struct {
 	Format string
 	Value  any
@@ -329,6 +338,7 @@ func (e ErrMultipleOf) Error() string {
 	return format(f, pair{"value", e.Value})
 }
 
+// An error returned by [Not] validator.
 type ErrNot struct {
 	Format string
 }
@@ -353,6 +363,7 @@ func (e ErrNot) Error() string {
 	return f
 }
 
+// An error returned by [AnyOf] validator.
 type ErrAnyOf struct {
 	Format string
 	Errors Errors
@@ -393,6 +404,7 @@ func (e ErrAnyOf) Error() string {
 	return format(f, pair{"errors", e.Errors})
 }
 
+// A constraint error returned by [Min].
 type ErrMin struct {
 	Format string
 	Value  any
@@ -418,6 +430,7 @@ func (e ErrMin) Error() string {
 	return format(f, pair{"value", e.Value})
 }
 
+// A constraint error returned by [ExclMin].
 type ErrExclMin struct {
 	Format string
 	Value  any
@@ -443,6 +456,7 @@ func (e ErrExclMin) Error() string {
 	return format(f, pair{"value", e.Value})
 }
 
+// A constraint error returned by [Max].
 type ErrMax struct {
 	Format string
 	Value  any
@@ -468,6 +482,7 @@ func (e ErrMax) Error() string {
 	return format(f, pair{"value", e.Value})
 }
 
+// A constraint error returned by [ExclMax].
 type ErrExclMax struct {
 	Format string
 	Value  any
@@ -493,6 +508,7 @@ func (e ErrExclMax) Error() string {
 	return format(f, pair{"value", e.Value})
 }
 
+// A constraint error returned by [MinLen].
 type ErrMinLen struct {
 	Format string
 	Value  int
@@ -518,6 +534,7 @@ func (e ErrMinLen) Error() string {
 	return format(f, pair{"value", e.Value})
 }
 
+// A constraint error returned by [MaxLen].
 type ErrMaxLen struct {
 	Format string
 	Value  int
@@ -543,6 +560,7 @@ func (e ErrMaxLen) Error() string {
 	return format(f, pair{"value", e.Value})
 }
 
+// A constraint error returned by [Pattern].
 type ErrPattern struct {
 	Format string
 }
@@ -567,6 +585,7 @@ func (e ErrPattern) Error() string {
 	return f
 }
 
+// A constraint error returned by [Contains].
 type ErrContains struct {
 	Format string
 	Err    Error
@@ -603,6 +622,7 @@ func (e ErrContains) Map(f func(Error) Error) Error {
 	return e
 }
 
+// A constraint error returned by [MinItems].
 type ErrMinItems struct {
 	Format string
 	Value  int
@@ -628,6 +648,7 @@ func (e ErrMinItems) Error() string {
 	return format(f, pair{"value", e.Value})
 }
 
+// A constraint error returned by [MaxItems].
 type ErrMaxItems struct {
 	Format string
 	Value  int
@@ -653,6 +674,7 @@ func (e ErrMaxItems) Error() string {
 	return format(f, pair{"value", e.Value})
 }
 
+// A constraint error returned by [PropertyNames].
 type ErrPropertyNames struct {
 	Format string
 	Name   string
@@ -690,6 +712,7 @@ func (e ErrPropertyNames) Map(f func(Error) Error) Error {
 	return e
 }
 
+// A constraint error returned by [MinProperties].
 type ErrMinProperties struct {
 	Format string
 	Value  int
@@ -715,6 +738,7 @@ func (e ErrMinProperties) Error() string {
 	return format(f, pair{"value", e.Value})
 }
 
+// A constraint error returned by [MaxProperties].
 type ErrMaxProperties struct {
 	Format string
 	Value  int

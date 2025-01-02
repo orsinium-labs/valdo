@@ -312,6 +312,35 @@ func (e ErrUnexpected) Error() string {
 	return format(f, pair{"name", e.Name})
 }
 
+// An error indicating that the property is not allowed.
+//
+// Returned by an [Object] validator.
+type ErrConst struct {
+	Format   string
+	Got      any
+	Expected any
+}
+
+// GetDefault implements [Error] interface.
+func (e ErrConst) GetDefault() Error {
+	return ErrConst{}
+}
+
+// SetFormat implements [Error] interface.
+func (e ErrConst) SetFormat(f string) Error {
+	e.Format = f
+	return e
+}
+
+// Error implements [error] interface.
+func (e ErrConst) Error() string {
+	f := e.Format
+	if f == "" {
+		f = `expected the value to be equal to "{expected}"`
+	}
+	return format(f, pair{"expected", e.Expected})
+}
+
 // A constraint error returned by [MultipleOf].
 type ErrMultipleOf struct {
 	Format string

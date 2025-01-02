@@ -186,11 +186,44 @@ func Any() Validator {
 }
 
 // Validate implements [Validator].
-func (n anyType) Validate(data any) Error {
+func (anyType) Validate(data any) Error {
 	return nil
 }
 
 // Schema implements [Validator].
-func (n anyType) Schema() jsony.Object {
+func (anyType) Schema() jsony.Object {
 	return jsony.Object{}
+}
+
+type constVal[T ~string] struct {
+	value T
+}
+
+// Const restricts a value to a single value.
+//
+// https://json-schema.org/understanding-json-schema/reference/const
+func Const[T ~string](value T) Validator {
+	return constVal[T]{value}
+}
+
+// Validate implements [Validator].
+func (v constVal[T]) Validate(data any) Error {
+	got, ok := data.(T)
+	if !ok {
+		return ErrType{
+			Got:      getTypeName(data),
+			Expected: getTypeName(v.value),
+		}
+	}
+	if got != v.value {
+		return ErrConst{Got: got, Expected: v.value}
+	}
+	return nil
+}
+
+// Schema implements [Validator].
+func (v constVal[T]) Schema() jsony.Object {
+	return jsony.Object{
+		jsony.Field{K: "const", V: jsony.String(v.value)},
+	}
 }

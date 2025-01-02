@@ -8,8 +8,9 @@ type Meta struct {
 	Title       string
 	Description string
 	Deprecated  bool
-	// Default    any
-	// Examples    []any
+	Example     jsony.Encoder
+	Examples    []jsony.Encoder
+	Default     jsony.Encoder
 }
 
 // Validate implements [Validator].
@@ -31,6 +32,17 @@ func (m Meta) Schema() jsony.Object {
 	}
 	if m.Deprecated {
 		s = append(s, jsony.Field{K: "deprecated", V: jsony.True})
+	}
+
+	var examples jsony.MixedArray
+	if m.Example != nil {
+		examples = append(examples, m.Example)
+	}
+	if m.Examples != nil {
+		examples = append(examples, m.Examples...)
+	}
+	if len(examples) > 0 {
+		s = append(s, jsony.Field{K: "examples", V: examples})
 	}
 	return s
 }

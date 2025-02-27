@@ -47,6 +47,13 @@ func TestObject_Validate_Map(t *testing.T) {
 	isErr[valdo.Errors](valdo.Validate(val, []byte(`{}`)))
 }
 
+func TestMap_Validate(t *testing.T) {
+	t.Parallel()
+	val := valdo.Map(valdo.Int())
+	noErr(valdo.Validate(val, []byte(`{"age": 13}`)))
+	isErr[valdo.ErrProperty](valdo.Validate(val, []byte(`{"age": "13"}`)))
+}
+
 func TestObject_Schema(t *testing.T) {
 	t.Parallel()
 	{

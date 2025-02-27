@@ -100,7 +100,9 @@ func (obj ObjectType) validateMap(data map[string]any) Error {
 			_, handled := handledNames[name]
 			if !handled {
 				err := obj.extraVal.Validate(val)
-				res.Add(ErrProperty{Name: name, Err: err})
+				if err != nil {
+					res.Add(ErrProperty{Name: name, Err: err})
+				}
 			}
 		}
 	} else if !obj.extra {

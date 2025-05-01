@@ -119,8 +119,8 @@ func (obj ObjectType) validateMap(data map[string]any) Error {
 // Schema implements [Validator].
 func (obj ObjectType) Schema() jsony.Object {
 	required := make(jsony.Array[jsony.String], 0)
-	properties := make(jsony.Map, 0)
-	patternProps := make(jsony.Map, 0)
+	properties := make(jsony.UnsafeObject, 0, len(obj.ps))
+	patternProps := make(jsony.UnsafeObject, 0)
 	for _, p := range obj.ps {
 		name := jsony.String(p.name)
 		if !p.optional {
@@ -128,10 +128,11 @@ func (obj ObjectType) Schema() jsony.Object {
 		}
 		pSchema := p.validator.Schema()
 		if len(pSchema) > 0 {
+			f := jsony.UnsafeField{K: name, V: pSchema}
 			if p.rex != nil {
-				patternProps[name] = pSchema
+				patternProps = append(patternProps, f)
 			} else {
-				properties[name] = pSchema
+				properties = append(properties, f)
 			}
 		}
 	}
@@ -148,14 +149,15 @@ func (obj ObjectType) Schema() jsony.Object {
 		res = append(res, jsony.Field{K: "required", V: required})
 	}
 
-	depReq := make(jsony.Map)
+	depReq := make(jsony.UnsafeObject, 0)
 	for _, p := range obj.ps {
 		if len(p.depReq) > 0 {
 			val := make(jsony.Array[jsony.String], len(p.depReq))
 			for i, reqName := range p.depReq {
 				val[i] = jsony.String(reqName)
 			}
-			depReq[jsony.String(p.name)] = val
+			f := jsony.UnsafeField{K: jsony.String(p.name), V: val}
+			depReq = append(depReq, f)
 		}
 	}
 	if len(depReq) > 0 {

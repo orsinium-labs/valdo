@@ -142,7 +142,11 @@ func TestPrimitive_Schema(t *testing.T) {
 	isEq(string(valdo.Schema(valdo.Float64())), `{"type":"number"}`)
 	isEq(string(valdo.Schema(valdo.Null())), `{"type":"null"}`)
 	isEq(string(valdo.Schema(valdo.Any())), `{}`)
+}
 
+func TestConst_Schema(t *testing.T) {
 	isEq(string(valdo.Schema(valdo.Const("hi"))), `{"const":"hi"}`)
 	isEq(string(valdo.Schema(valdo.Const(true))), `{"const":true}`)
+	isEq(string(valdo.Schema(valdo.Const(13))), `{"const":13}`)
+	isEq(string(valdo.Schema(valdo.Const(3.14))), `{"const":3.14}`)
 }

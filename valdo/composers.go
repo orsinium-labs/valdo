@@ -51,7 +51,7 @@ func AnyOf(vs ...Validator) Validator {
 func Enum[T string](vs ...T) Validator {
 	consts := make([]Validator, len(vs))
 	for i, value := range vs {
-		consts[i] = Const(value)
+		consts[i] = StringConst(value)
 	}
 	return anyOf{vs: consts}
 }

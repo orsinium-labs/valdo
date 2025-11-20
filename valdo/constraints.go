@@ -232,3 +232,16 @@ func MaxProperties(min uint) Constraint[map[string]any] {
 		field: jsony.Field{K: "maxProperties", V: jsony.UInt(min)},
 	}
 }
+
+func Equals[T bool | string | int](exp T) Constraint[T] {
+	c := func(got T) Error {
+		if got != exp {
+			return ErrConst{Got: got, Expected: exp}
+		}
+		return nil
+	}
+	return Constraint[T]{
+		check: c,
+		field: jsony.Field{K: "const", V: jsony.Detect(exp)},
+	}
+}

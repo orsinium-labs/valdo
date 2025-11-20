@@ -2,101 +2,55 @@ package valdo
 
 import "github.com/orsinium-labs/jsony"
 
-type strConst[T ~string] struct {
-	value T
+type constVal[T string | bool | int] struct {
+	validator func(any) (T, Error)
+	value     T
 }
 
-// Const restricts a value to a single value.
+func (p constVal[T]) Validate(raw any) Error {
+	got, fErr := p.validator(raw)
+	if fErr != nil {
+		return fErr
+	}
+	if got != p.value {
+		return ErrConst{Got: got, Expected: p.value}
+	}
+	return nil
+}
+
+// Schema implements [Validator].
+func (p constVal[T]) Schema() jsony.Object {
+	field := jsony.Field{K: "const", V: jsony.Detect(p.value)}
+	return jsony.Object{field}
+}
+
+// StringConst restricts a value to a single string value.
 //
 // https://json-schema.org/understanding-json-schema/reference/const
 func StringConst[T ~string](value T) Validator {
-	return strConst[T]{value}
-}
-
-// Validate implements [Validator].
-func (v strConst[T]) Validate(data any) Error {
-	got, ok := data.(T)
-	if !ok {
-		return ErrType{
-			Got:      getTypeName(data),
-			Expected: getTypeName(v.value),
-		}
-	}
-	if got != v.value {
-		return ErrConst{Got: got, Expected: v.value}
-	}
-	return nil
-}
-
-// Schema implements [Validator].
-func (v strConst[T]) Schema() jsony.Object {
-	return jsony.Object{
-		jsony.Field{K: "const", V: jsony.String(v.value)},
+	return constVal[string]{
+		validator: stringValidator,
+		value:     string(value),
 	}
 }
 
-type boolConst[T ~bool] struct {
-	value T
-}
-
-// Const restricts a value to a single value.
+// BoolConst restricts a value to a single boolean value.
 //
 // https://json-schema.org/understanding-json-schema/reference/const
 func BoolConst[T ~bool](value T) Validator {
-	return boolConst[T]{value}
-}
-
-// Validate implements [Validator].
-func (v boolConst[T]) Validate(data any) Error {
-	got, ok := data.(T)
-	if !ok {
-		return ErrType{
-			Got:      getTypeName(data),
-			Expected: getTypeName(v.value),
-		}
+	return constVal[bool]{
+		validator: boolValidator,
+		value:     bool(value),
 	}
-	if got != v.value {
-		return ErrConst{Got: got, Expected: v.value}
-	}
-	return nil
+
 }
 
-// Schema implements [Validator].
-func (v boolConst[T]) Schema() jsony.Object {
-	return jsony.Object{
-		jsony.Field{K: "const", V: jsony.Bool(v.value)},
-	}
-}
-
-type intConst[T ~int] struct {
-	value T
-}
-
-// Const restricts a value to a single value.
+// IntConst restricts a value to a single integer value.
 //
 // https://json-schema.org/understanding-json-schema/reference/const
 func IntConst[T ~int](value T) Validator {
-	return intConst[T]{value}
-}
-
-// Validate implements [Validator].
-func (v intConst[T]) Validate(data any) Error {
-	got, ok := data.(T)
-	if !ok {
-		return ErrType{
-			Got:      getTypeName(data),
-			Expected: getTypeName(v.value),
-		}
-	}
-	if got != v.value {
-		return ErrConst{Got: got, Expected: v.value}
-	}
-	return nil
-}
-
-// Schema implements [Validator].
-func (v intConst[T]) Schema() jsony.Object {
-	return jsony.Object{
-		jsony.Field{K: "const", V: jsony.Int(v.value)},
+	return constVal[int]{
+		validator: intValidator,
+		value:     int(value),
 	}
 }

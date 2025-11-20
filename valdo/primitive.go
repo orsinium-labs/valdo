@@ -195,14 +195,18 @@ func (anyType) Schema() jsony.Object {
 	return jsony.Object{}
 }
 
-type constVal[T ~string | bool] struct {
+type builtinInt interface {
+	int | int8 | int16 | int32 | int64 | uint | uintptr | uint8 | uint16 | uint32 | uint64
+}
+
+type constVal[T string | bool | builtinInt | float32 | float64] struct {
 	value T
 }
 
 // Const restricts a value to a single value.
 //
 // https://json-schema.org/understanding-json-schema/reference/const
-func Const[T ~string | bool](value T) Validator {
+func Const[T string | bool | builtinInt | float32 | float64](value T) Validator {
 	return constVal[T]{value}
 }
 
@@ -223,15 +227,40 @@ func (v constVal[T]) Validate(data any) Error {
 
 // Schema implements [Validator].
 func (v constVal[T]) Schema() jsony.Object {
-	var encoder jsony.Encoder
-	switch v := any(v.value).(type) {
-	case string:
-		encoder = jsony.String(v)
-	case bool:
-		encoder = jsony.Bool(v)
-	}
-
 	return jsony.Object{
-		jsony.Field{K: "const", V: encoder},
+		jsony.Field{K: "const", V: anyToJsony(v.value)},
+	}
+}
+
+func anyToJsony(v any) jsony.Encoder {
+	switch v := any(v).(type) {
+	case string:
+		return jsony.String(v)
+	case bool:
+		return jsony.Bool(v)
+	case int:
+		return jsony.Int(v)
+	case int8:
+		return jsony.Int8(v)
+	case int16:
+		return jsony.Int16(v)
+	case int32:
+		return jsony.Int32(v)
+	case int64:
+		return jsony.Int64(v)
+	case uint:
+		return jsony.UInt(v)
+	case uintptr:
+		return jsony.UIntPtr(v)
+	case uint8:
+		return jsony.UInt8(v)
+	case uint16:
+		return jsony.UInt16(v)
+	case uint32:
+		return jsony.UInt32(v)
+	case uint64:
+		return jsony.UInt64(v)
+	default:
+		return nil
 	}
 }

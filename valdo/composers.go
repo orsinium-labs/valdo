@@ -48,7 +48,7 @@ func AnyOf(vs ...Validator) Validator {
 }
 
 // Enum requires the input value to be one of the given constants.
-func Enum[T ~string](vs ...T) Validator {
+func Enum[T string](vs ...T) Validator {
 	consts := make([]Validator, len(vs))
 	for i, value := range vs {
 		consts[i] = Const(value)

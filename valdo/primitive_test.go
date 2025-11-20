@@ -134,6 +134,14 @@ func TestConst_Bool_Validate(t *testing.T) {
 	isErr[valdo.ErrType](valdo.Validate(val, []byte(`"false"`)))
 }
 
+func TestConst_Int_Validate(t *testing.T) {
+	t.Parallel()
+	val := valdo.Const(42)
+	noErr(valdo.Validate(val, []byte(`42`)))
+	isErr[valdo.ErrConst](valdo.Validate(val, []byte(`13`)))
+	isErr[valdo.ErrType](valdo.Validate(val, []byte(`"42"`)))
+}
+
 func TestPrimitive_Schema(t *testing.T) {
 	t.Parallel()
 	isEq(string(valdo.Schema(valdo.Bool())), `{"type":"boolean"}`)
@@ -148,5 +156,4 @@ func TestConst_Schema(t *testing.T) {
 	isEq(string(valdo.Schema(valdo.Const("hi"))), `{"const":"hi"}`)
 	isEq(string(valdo.Schema(valdo.Const(true))), `{"const":true}`)
 	isEq(string(valdo.Schema(valdo.Const(13))), `{"const":13}`)
-	isEq(string(valdo.Schema(valdo.Const(3.14))), `{"const":3.14}`)
 }

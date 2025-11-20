@@ -16,6 +16,7 @@ var (
 	N = Null
 	F = Float64
 	I = Int
+	T = Tuple
 )
 
 type Validator interface {

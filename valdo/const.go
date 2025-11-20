@@ -24,6 +24,11 @@ func (p constVal[T]) Schema() jsony.Object {
 	return jsony.Object{field}
 }
 
+// DEPRECATED: Use [StringConst] instead.
+func Const[T ~string](value T) Validator {
+	return StringConst(string(value))
+}
+
 // StringConst restricts a value to a single string value.
 //
 // https://json-schema.org/understanding-json-schema/reference/const

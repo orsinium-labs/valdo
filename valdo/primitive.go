@@ -195,31 +195,33 @@ func (anyType) Schema() jsony.Object {
 	return jsony.Object{}
 }
 
-type ints interface {
-	int | int8 | int16 | int32 | int64
-}
-
-type uints interface {
-	uint | uintptr | uint8 | uint16 | uint32 | uint64
-}
-
-type numbers interface {
-	ints | uints | float32 | float64
-}
-
-type constVal[T string | bool | numbers] struct {
+type constVal[T string | bool | int] struct {
+	// TODO: Support more types in the type constraint.
+	// We don't support floats because strict equality on floats is a bad idea.
 	value T
 }
 
 // Const restricts a value to a single value.
 //
 // https://json-schema.org/understanding-json-schema/reference/const
-func Const[T string | bool | numbers](value T) Validator {
+func Const[T string | bool | int](value T) Validator {
 	return constVal[T]{value}
 }
 
 // Validate implements [Validator].
 func (v constVal[T]) Validate(data any) Error {
+	want, isInt := any(v.value).(int)
+	if isInt {
+		got, intErr := intValidator(data)
+		if intErr != nil {
+			return intErr
+		}
+		if got != want {
+			return ErrConst{Got: got, Expected: want}
+		}
+		return nil
+	}
+
 	got, ok := data.(T)
 	if !ok {
 		return ErrType{
@@ -236,6 +238,6 @@ func (v constVal[T]) Validate(data any) Error {
 // Schema implements [Validator].
 func (v constVal[T]) Schema() jsony.Object {
 	return jsony.Object{
-		jsony.Field{K: "const", V: jsony.UnsafeDetect(v.value)},
+		jsony.Field{K: "const", V: jsony.Detect(v.value)},
 	}
 }

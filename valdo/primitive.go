@@ -260,6 +260,10 @@ func anyToJsony(v any) jsony.Encoder {
 		return jsony.UInt32(v)
 	case uint64:
 		return jsony.UInt64(v)
+	case float32:
+		return jsony.Float32(v)
+	case float64:
+		return jsony.Float64(v)
 	default:
 		return nil
 	}

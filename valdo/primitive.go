@@ -195,14 +195,14 @@ func (anyType) Schema() jsony.Object {
 	return jsony.Object{}
 }
 
-type constVal[T ~string] struct {
+type constVal[T ~string | bool] struct {
 	value T
 }
 
 // Const restricts a value to a single value.
 //
 // https://json-schema.org/understanding-json-schema/reference/const
-func Const[T ~string](value T) Validator {
+func Const[T ~string | bool](value T) Validator {
 	return constVal[T]{value}
 }
 
@@ -223,7 +223,15 @@ func (v constVal[T]) Validate(data any) Error {
 
 // Schema implements [Validator].
 func (v constVal[T]) Schema() jsony.Object {
+	var encoder jsony.Encoder
+	switch v := any(v.value).(type) {
+	case string:
+		encoder = jsony.String(v)
+	case bool:
+		encoder = jsony.Bool(v)
+	}
+
 	return jsony.Object{
-		jsony.Field{K: "const", V: jsony.String(v.value)},
+		jsony.Field{K: "const", V: encoder},
 	}
 }

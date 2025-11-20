@@ -108,6 +108,32 @@ func TestAny_Validate(t *testing.T) {
 	isErr[valdo.ErrNoInput](valdo.Validate(val, []byte(``)))
 }
 
+func TestConst_String_Validate(t *testing.T) {
+	t.Parallel()
+	val := valdo.Const("hi")
+	noErr(valdo.Validate(val, []byte(`"hi"`)))
+	isErr[valdo.ErrConst](valdo.Validate(val, []byte(`""`)))
+	isErr[valdo.ErrConst](valdo.Validate(val, []byte(`"hello"`)))
+	isErr[valdo.ErrType](valdo.Validate(val, []byte(`13`)))
+
+	val = valdo.Const("42")
+	noErr(valdo.Validate(val, []byte(`"42"`)))
+	isErr[valdo.ErrType](valdo.Validate(val, []byte(`42`)))
+}
+
+func TestConst_Bool_Validate(t *testing.T) {
+	t.Parallel()
+	val := valdo.Const(true)
+	noErr(valdo.Validate(val, []byte(`true`)))
+	isErr[valdo.ErrConst](valdo.Validate(val, []byte(`false`)))
+	isErr[valdo.ErrType](valdo.Validate(val, []byte(`"true"`)))
+
+	val = valdo.Const(false)
+	noErr(valdo.Validate(val, []byte(`false`)))
+	isErr[valdo.ErrConst](valdo.Validate(val, []byte(`true`)))
+	isErr[valdo.ErrType](valdo.Validate(val, []byte(`"false"`)))
+}
+
 func TestPrimitive_Schema(t *testing.T) {
 	t.Parallel()
 	isEq(string(valdo.Schema(valdo.Bool())), `{"type":"boolean"}`)
@@ -116,4 +142,7 @@ func TestPrimitive_Schema(t *testing.T) {
 	isEq(string(valdo.Schema(valdo.Float64())), `{"type":"number"}`)
 	isEq(string(valdo.Schema(valdo.Null())), `{"type":"null"}`)
 	isEq(string(valdo.Schema(valdo.Any())), `{}`)
+
+	isEq(string(valdo.Schema(valdo.Const("hi"))), `{"const":"hi"}`)
+	isEq(string(valdo.Schema(valdo.Const(true))), `{"const":true}`)
 }

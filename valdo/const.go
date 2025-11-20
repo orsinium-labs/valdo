@@ -27,20 +27,20 @@ func (p constVal[T]) Schema() jsony.Object {
 // StringConst restricts a value to a single string value.
 //
 // https://json-schema.org/understanding-json-schema/reference/const
-func StringConst[T ~string](value T) Validator {
+func StringConst(value string) Validator {
 	return constVal[string]{
 		validator: stringValidator,
-		value:     string(value),
+		value:     value,
 	}
 }
 
 // BoolConst restricts a value to a single boolean value.
 //
 // https://json-schema.org/understanding-json-schema/reference/const
-func BoolConst[T ~bool](value T) Validator {
+func BoolConst(value bool) Validator {
 	return constVal[bool]{
 		validator: boolValidator,
-		value:     bool(value),
+		value:     value,
 	}
 
 }
@@ -48,9 +48,9 @@ func BoolConst[T ~bool](value T) Validator {
 // IntConst restricts a value to a single integer value.
 //
 // https://json-schema.org/understanding-json-schema/reference/const
-func IntConst[T ~int](value T) Validator {
+func IntConst(value int) Validator {
 	return constVal[int]{
 		validator: intValidator,
-		value:     int(value),
+		value:     value,
 	}
 }

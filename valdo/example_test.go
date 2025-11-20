@@ -93,6 +93,14 @@ func ExampleObject() {
 	// Output: <nil>
 }
 
+func ExampleEnum() {
+	validator := valdo.Enum("red", "green", "blue")
+	input := []byte(`"green"`)
+	err := valdo.Validate(validator, input)
+	fmt.Println(err)
+	// Output: <nil>
+}
+
 func ExampleValidate() {
 	validator := valdo.Object(
 		valdo.P("age", valdo.Int()),

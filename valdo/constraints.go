@@ -123,6 +123,7 @@ func MaxLen(min uint) Constraint[string] {
 	}
 }
 
+// Require the string to match the given regex.
 func Pattern(r string) Constraint[string] {
 	rex := regexp.MustCompile(r)
 	c := func(f string) Error {
@@ -137,6 +138,7 @@ func Pattern(r string) Constraint[string] {
 	}
 }
 
+// Require the list to contain at least one item matching the validator.
 func Contains(v Validator) Constraint[[]any] {
 	c := func(items []any) Error {
 		var err Error

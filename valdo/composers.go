@@ -29,7 +29,7 @@ func (n allOf) Schema() jsony.Object {
 		ss[i] = v.Schema()
 	}
 	return jsony.Object{
-		jsony.Field{K: "allOf", V: ss},
+		{K: "allOf", V: ss},
 	}
 }
 
@@ -67,7 +67,7 @@ func (n anyOf) Schema() jsony.Object {
 		ss[i] = v.Schema()
 	}
 	return jsony.Object{
-		jsony.Field{K: "anyOf", V: ss},
+		{K: "anyOf", V: ss},
 	}
 }
 
@@ -91,6 +91,6 @@ func (n notType) Validate(data any) Error {
 // Schema implements [Validator].
 func (n notType) Schema() jsony.Object {
 	return jsony.Object{
-		jsony.Field{K: "not", V: n.v.Schema()},
+		{K: "not", V: n.v.Schema()},
 	}
 }

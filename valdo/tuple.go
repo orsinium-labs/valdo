@@ -83,8 +83,8 @@ func (t TupleType) Schema() jsony.Object {
 		items = jsony.Bool(false)
 	}
 	res := jsony.Object{
-		jsony.Field{K: "type", V: jsony.SafeString("array")},
-		jsony.Field{K: "items", V: items},
+		{K: "type", V: jsony.SafeString("array")},
+		{K: "items", V: items},
 	}
 	if len(t.vals) > 0 {
 		items := make([]jsony.Object, len(t.vals))

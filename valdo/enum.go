@@ -34,6 +34,7 @@ func (v enum) Schema() jsony.Object {
 		values[i] = jsony.String(val)
 	}
 	return jsony.Object{
-		jsony.Field{K: "enum", V: jsony.Array[jsony.String](values)},
+		{K: "type", V: jsony.SafeString("string")},
+		{K: "enum", V: jsony.Array[jsony.String](values)},
 	}
 }

@@ -36,7 +36,7 @@ func (p PrimitiveType[T]) Validate(raw any) Error {
 // Schema implements [Validator].
 func (p PrimitiveType[T]) Schema() jsony.Object {
 	res := jsony.Object{
-		jsony.Field{K: "type", V: jsony.String(p.name)},
+		{K: "type", V: jsony.String(p.name)},
 	}
 	for _, c := range p.cs {
 		res = append(res, c.field)
@@ -174,7 +174,7 @@ func (n nullType) Validate(data any) Error {
 // Schema implements [Validator].
 func (n nullType) Schema() jsony.Object {
 	return jsony.Object{
-		jsony.Field{K: "type", V: jsony.SafeString("null")},
+		{K: "type", V: jsony.SafeString("null")},
 	}
 }
 

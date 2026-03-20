@@ -50,7 +50,7 @@ func (a ArrayType) validateArray(data []any) Error {
 // Schema implements [Validator].
 func (a ArrayType) Schema() jsony.Object {
 	res := jsony.Object{
-		jsony.Field{K: "type", V: jsony.SafeString("array")},
+		{K: "type", V: jsony.SafeString("array")},
 	}
 	items := a.elem.Schema()
 	if len(items) > 0 {

@@ -47,9 +47,4 @@ user, err := valdo.Unmarshal[User](validator, input)
 schema := valdo.Schema(validator)
 ```
 
-`Validate` and `Unmarshal` reject duplicate names within an object, including
-escaped spellings of the same name. Reusing a name in separate objects is allowed.
-Rejecting duplicates prevents validation and later struct decoding from reading
-different values from the same JSON.
-
 See [documentation](https://pkg.go.dev/github.com/orsinium-labs/valdo/valdo) for more.

@@ -34,7 +34,7 @@ func TestUnmarshalRejectsDuplicateObjects(t *testing.T) {
 			is := is.New(t)
 			got, err := valdo.Unmarshal[request](tc.validator, []byte(tc.input))
 			t.Logf("error=%v; decoded=%+v", err, got)
-			is.True(err != nil) // Repeated objects must not bypass validation of admin.
+			is.True(err != nil)
 			is.Equal(got, request{})
 		})
 	}
@@ -62,7 +62,7 @@ func TestValidateRejectsDuplicateNames(t *testing.T) {
 			v := &recordingValidator{}
 			err := valdo.Validate(v, []byte(tc.input))
 			is.True(err != nil)
-			is.Equal(v.calls, 0) // Reject before invoking even a custom validator.
+			is.Equal(v.calls, 0)
 		})
 	}
 }
@@ -92,7 +92,7 @@ func TestValidatePreservesJSONErrorsAndNumberTypes(t *testing.T) {
 	}
 	v := &recordingValidator{}
 	is.NoErr(valdo.Validate(v, []byte(`42`)))
-	is.Equal(v.value, any(float64(42))) // Existing custom validators still receive float64.
+	is.Equal(v.value, any(float64(42)))
 }
 
 type recordingValidator struct {

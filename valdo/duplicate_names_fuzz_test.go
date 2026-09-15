@@ -30,8 +30,6 @@ func FuzzValidateDuplicateNames(f *testing.F) {
 			is.True(err != nil)
 			return
 		}
-		// Independent oracle: decoded names from the standard token decoder,
-		// with a separate set for each object. Do not use member counts here.
 		d := json.NewDecoder(bytes.NewReader(input))
 		duplicate, refErr := referenceDuplicateNames(d)
 		is.NoErr(refErr)

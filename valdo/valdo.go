@@ -2,6 +2,7 @@ package valdo
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/orsinium-labs/jsony"
 )
@@ -29,7 +30,8 @@ func Schema(v Validator) []byte {
 	return jsony.EncodeBytes(v.Schema())
 }
 
-// Read the input JSON, validate it, and unmarshal into the given type.
+// Read the input JSON, reject duplicate object names, validate it, and unmarshal
+// into the given type.
 func Unmarshal[T any](v Validator, input []byte) (T, error) {
 	var target T
 	err := Validate(v, input)
@@ -40,7 +42,7 @@ func Unmarshal[T any](v Validator, input []byte) (T, error) {
 	return target, err
 }
 
-// Validate the given JSON.
+// Validate the given JSON, rejecting duplicate names within any object.
 func Validate(v Validator, input []byte) error {
 	if len(input) == 0 {
 		return ErrNoInput{}
@@ -50,9 +52,51 @@ func Validate(v Validator, input []byte) error {
 	if err != nil {
 		return err
 	}
+	if countJSONMembers(input) != countDecodedMembers(data) {
+		return errors.New("duplicate JSON object names")
+	}
 	vErr := v.Validate(data)
 	if vErr != nil {
 		return vErr
 	}
 	return nil
+}
+
+// countJSONMembers requires syntactically valid JSON. Outside strings, each
+// colon introduces exactly one object member. Escaped quotes do not end strings.
+func countJSONMembers(input []byte) int {
+	count := 0
+	for i := 0; i < len(input); i++ {
+		switch input[i] {
+		case ':':
+			count++
+		case '"':
+			for i++; input[i] != '"'; i++ {
+				if input[i] == '\\' {
+					i++
+				}
+			}
+		}
+	}
+	return count
+}
+
+// Decoding into any preserves every object member unless a duplicate name
+// replaces an earlier member (and possibly its children). Therefore the total
+// member count falls iff a duplicate occurs, including equivalent escaped names.
+// Let encoding/json handle name equality instead of decoding names a second time.
+func countDecodedMembers(data any) int {
+	count := 0
+	switch data := data.(type) {
+	case map[string]any:
+		count = len(data)
+		for _, value := range data {
+			count += countDecodedMembers(value)
+		}
+	case []any:
+		for _, value := range data {
+			count += countDecodedMembers(value)
+		}
+	}
+	return count
 }

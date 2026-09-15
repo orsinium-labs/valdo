@@ -10,20 +10,34 @@ import (
 )
 
 func TestUnmarshalRejectsDuplicateObjects(t *testing.T) {
-	is := is.New(t)
+	type profile struct {
+		Admin bool `json:"admin"`
+	}
 	type request struct {
-		Profile struct {
-			Admin bool `json:"admin"`
-		} `json:"profile"`
+		Profile profile `json:"profile"`
+		User    struct {
+			Profile profile `json:"profile"`
+		} `json:"user"`
 	}
 	v := valdo.Object(valdo.Property("profile", valdo.Object(
 		valdo.Property("admin", valdo.BoolConst(false)).Optional(),
 	)))
-	input := []byte(`{"profile":{"admin":true},"profile":{}}`)
-	got, err := valdo.Unmarshal[request](v, input)
-	t.Logf("error=%v; admin=%v", err, got.Profile.Admin)
-	is.True(err != nil) // Repeated objects must not bypass validation of admin.
-	is.Equal(got, request{})
+	cases := []struct {
+		name, input string
+		validator   valdo.Validator
+	}{
+		{"root", `{"profile":{"admin":true},"profile":{}}`, v},
+		{"nested", `{"user":{"profile":{"admin":true},"profile":{}}}`, valdo.Object(valdo.Property("user", v))},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			is := is.New(t)
+			got, err := valdo.Unmarshal[request](tc.validator, []byte(tc.input))
+			t.Logf("error=%v; decoded=%+v", err, got)
+			is.True(err != nil) // Repeated objects must not bypass validation of admin.
+			is.Equal(got, request{})
+		})
+	}
 }
 
 func TestValidateRejectsDuplicateNames(t *testing.T) {
